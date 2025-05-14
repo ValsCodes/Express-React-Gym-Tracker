@@ -19,10 +19,10 @@ exerciseRoutes.post("/exercise", async (req: Request, res: Response) => {
     res.send(await exerciseGroupController.createExercise(data));
 })
 
-exerciseRoutes.put("/exercise/:id", (req: Request, res: Response) => {
+exerciseRoutes.put("/exercise/:id", async (req: Request, res: Response) => {
     const id = req.params.id;
     const data = req.body;
-    res.send(exerciseGroupController.updateExercise(id, data));
+    res.send(await exerciseGroupController.updateExercise(id, data));
 })
 
 exerciseRoutes.delete("/exercise/:id", async (req: Request, res: Response) => {

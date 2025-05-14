@@ -1,29 +1,75 @@
-import { CreateMuscleGroup } from "../common/interfaces";
-import {MuscleGroupModel} from "../models";
-// import {CreateUser} from "../common/interfaces";
+import { MuscleGroupModel } from "../models";
+import {  MuscleGroupDTO,  CreateMuscleGroupDTO,  UpdateMuscleGroupDTO,} from "../common/interfaces/muscle-group";
+import { MuscleGroupMapper } from "../common/mappers/muscle-group.mapper";
+import { MuscleGroupValidator } from "../common/validators/muscle-group.validator";
 
-const muscleGroupModel = new MuscleGroupModel();
 export class MuscleGroupController {
+  private model = new MuscleGroupModel();
 
-    async getAllMuscleGroups() {
-        return await muscleGroupModel.getAll();
+  async getAllMuscleGroups(): Promise<MuscleGroupDTO[]> {
+    const all = await this.model.getAll();
+    return MuscleGroupMapper.toDTOList(all);
+  }
+
+  async getMuscleGroupById(id: number): Promise<MuscleGroupDTO | null> {
+    const validation = MuscleGroupValidator.validateId(id);
+    if (!validation.valid) {
+      throw new Error(validation.errors.join(", "));
     }
 
-    async getMuscleGroupById(id: number) {
-        return await muscleGroupModel.getById(id);
+    const mg = await this.model.getById(id);
+    return mg ? MuscleGroupMapper.toDTO(mg) : null;
+  }
+
+  async createMuscleGroup(
+    dto: CreateMuscleGroupDTO
+  ): Promise<{ id: number; message: string }> {
+    const validation = MuscleGroupValidator.validateName(dto.name);
+    if (!validation.valid) {
+      throw new Error(validation.errors.join(", "));
     }
 
-    async createMuscleGroup(muscleGroup: CreateMuscleGroup) {
-        return await muscleGroupModel.create(muscleGroup);
+    const id = await this.model.create(dto);
+    return {
+      id,
+      message: `Muscle group with id ${id} created successfully.`,
+    };
+  }
+
+  async updateMuscleGroup( id: number, dto: UpdateMuscleGroupDTO ): Promise<{ success: boolean; message: string }> {
+    const idValidation = MuscleGroupValidator.validateId(id);
+    if (!idValidation.valid) {
+      throw new Error(idValidation.errors.join(", "));
     }
 
-    updateMuscleGroup(id: string, muscleGroup: any) {
-        const idNumber = Number(id);
-        return muscleGroupModel.update(idNumber, muscleGroup);
+    const bodyValidation = MuscleGroupValidator.validateName(dto.name);
+    if (!bodyValidation.valid) {
+      throw new Error(bodyValidation.errors.join(", "));
     }
 
-    async deleteMuscleGroup(id: string) {
-        const idNumber = Number(id);
-        return await muscleGroupModel.delete(idNumber);
+    const success = await this.model.update(id, dto);
+    return {
+      success,
+      message: success
+        ? `Muscle group ${id} updated successfully.`
+        : `Muscle group ${id} could not be updated.`,
+    };
+  }
+
+  async deleteMuscleGroup(
+    id: number
+  ): Promise<{ success: boolean; message: string }> {
+    const validation = MuscleGroupValidator.validateId(id);
+    if (!validation.valid) {
+      throw new Error(validation.errors.join(", "));
     }
+
+    const success = await this.model.delete(id);
+    return {
+      success,
+      message: success
+        ? `Muscle group ${id} deleted successfully.`
+        : `Failed to delete muscle group ${id}.`,
+    };
+  }
 }

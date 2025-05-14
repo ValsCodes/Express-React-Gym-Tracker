@@ -1,28 +1,82 @@
-import {WorkingSetModel} from "../models";
- import {CreateWorkingSet} from "../common/interfaces";
+import { WorkoutModel } from "../models";
+import {
+  WorkoutDTO,
+  CreateWorkoutDTO,
+  UpdateWorkoutDTO,
+} from "../common/interfaces/workout";
+import { WorkoutMapper } from "../common/mappers/workout.mapper";
+import { WorkoutValidator } from "../common/validators/workout.validator";
 
-const workingSetModel = new WorkingSetModel();
 export class WorkoutController {
+  private model = new WorkoutModel();
 
-    async getAllWorkingSets() {
-        return await workingSetModel.getAll();
+  async getAllWorkouts(): Promise<WorkoutDTO[]> {
+    const all = await this.model.getAll();
+    return WorkoutMapper.toDTOList(all);
+  }
+
+  async getWorkoutById(id: number): Promise<WorkoutDTO | null> {
+    const validation = WorkoutValidator.validateId(id);
+    if (!validation.valid) {
+      throw new Error(validation.errors.join(", "));
     }
 
-    async getWorkingSetById(id: number) {
-        return await workingSetModel.getById(id);
+    const workout = await this.model.getById(id);
+    return workout ? WorkoutMapper.toDTO(workout) : null;
+  }
+
+  async createWorkout(
+    dto: CreateWorkoutDTO
+  ): Promise<{ id: number; message: string }> {
+    const validation = WorkoutValidator.validateWorkout(dto);
+    if (!validation.valid) {
+      throw new Error(validation.errors.join(", "));
     }
 
-    async createWorkingSet(workingSet: CreateWorkingSet) {
-        return await workingSetModel.create(workingSet);
+    const id = await this.model.create(dto);
+    return {
+      id,
+      message: `Workout ${id} created successfully.`,
+    };
+  }
+
+  async updateWorkout(
+    id: number,
+    dto: UpdateWorkoutDTO
+  ): Promise<{ success: boolean; message: string }> {
+    const idValidation = WorkoutValidator.validateId(id);
+    if (!idValidation.valid) {
+      throw new Error(idValidation.errors.join(", "));
     }
 
-    updateWorkingSet(id: string, workingSet: any) {
-        const idNumber = Number(id);
-        return workingSetModel.update(idNumber, workingSet);
+    const bodyValidation = WorkoutValidator.validateWorkout(dto);
+    if (!bodyValidation.valid) {
+      throw new Error(bodyValidation.errors.join(", "));
     }
 
-    async deleteWorkingSet(id: string) {
-        const idNumber = Number(id);
-        return await workingSetModel.delete(idNumber);
+    const success = await this.model.update(id, dto);
+    return {
+      success,
+      message: success
+        ? `Workout ${id} updated successfully.`
+        : `Workout ${id} could not be updated.`,
+    };
+  }
+
+  async deleteWorkout(
+    id: number
+  ): Promise<{ success: boolean; message: string }> {
+    const validation = WorkoutValidator.validateId(id);
+    if (!validation.valid) {
+      throw new Error(validation.errors.join(", "));
     }
+
+    const success = await this.model.delete(id);
+    return {
+      success,
+      message: success
+        ? `Workout ${id} deleted successfully.`
+        : `Failed to delete workout ${id}.`,
+    };
+  }
 }

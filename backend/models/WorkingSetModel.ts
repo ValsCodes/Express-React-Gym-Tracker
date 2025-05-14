@@ -1,42 +1,102 @@
-import {Pool, RowDataPacket} from "mysql2/promise";
-import {Database} from "./Database";
-import {WorkingSet, CreateWorkingSet} from "../common/interfaces";
+// models/WorkingSetModel.ts
+import { Pool, RowDataPacket, ResultSetHeader } from "mysql2/promise";
+import { Database } from "./Database";
+import {
+  WorkingSet,
+  CreateWorkingSetDTO,
+  UpdateWorkingSetDTO,
+} from "../common/interfaces/working-set";
+import { WorkingSetMapper } from "../common/mappers/working-set.mapper";
 
 export class WorkingSetModel {
-    db: Pool;
+  private db: Pool;
 
-    constructor() {
-        this.db = new Database().conn;
+  constructor() {
+    this.db = new Database().conn;
+  }
+
+  async getAll(): Promise<WorkingSet[]> {
+    try {
+      const [rows] = await this.db.query<WorkingSet[] & RowDataPacket[]>(
+        "SELECT * FROM working_set"
+      );
+      return rows;
+    } catch (err) {
+      throw new Error("Error fetching working sets");
     }
+  }
 
-    async getAll() {
-        const [rows] = await this.db.query("SELECT * FROM working_set");
-        return rows;
+  async getById(id: number): Promise<WorkingSet | null> {
+    try {
+      const [rows] = await this.db.execute<
+        WorkingSet[] & RowDataPacket[]
+      >("SELECT * FROM working_set WHERE id = ?", [id]);
+      return rows[0] ?? null;
+    } catch (err) {
+      throw new Error(`Error fetching working set ${id}`);
     }
+  }
 
-        async getById(id: number) {
-            const result = await this.db.execute<WorkingSet[] & RowDataPacket[]>(`SELECT * FROM muscle_group WHERE id = ?`, [id]);
-            return result[0][0];
-        }
-    
-        async create(workingSet: CreateWorkingSet) {
-            const [result] = await this.db.execute(`INSERT INTO working_set(name) VALUES (?)`, [
-                workingSet.exercise_id, workingSet.weight, workingSet.repetitions, workingSet.workout_id, workingSet.comment
-            ]);
-    
-            return `Muscle Group created`;
-        }
-    
-        async update(id: number, workingSet: any) {
-           const fields = Object.keys(workingSet).map(key => `${key} = ?`).join(',');
-           const values = Object.values(workingSet);
-           values.push(id);
-           const result = await this.db.execute(`UPDATE working_set SET ${fields} WHERE id = ?`, values)
-            return `Updated working Set ${id}`
-        }
-    
-        async delete(id: number) {
-            const [rows] = await this.db.execute(`DELETE FROM working_set WHERE id = ?`, [id]);
-            return rows;
-        }
+  async create(dto: CreateWorkingSetDTO): Promise<number> {
+    // TODO doesn't work for some reason ???
+    try {
+      const dbModel = WorkingSetMapper.toDBModel(dto);
+console.log(dbModel);
+
+      const [result] = await this.db.execute<ResultSetHeader>(
+        `INSERT INTO working_set
+           (exercise_id, weight, repetitions, workout_id, comment)
+         VALUES (?, ?, ?, ?, ?)`,
+        [
+          dbModel.exercise_id,
+          dbModel.weight,
+          dbModel.repetitions,
+          dbModel.workout_id,
+          dbModel.comment
+        ]
+      );
+      return result.insertId;
+    } catch (err) {
+      throw new Error("Error creating working set");
+    }
+  }
+
+
+  async update(
+    id: number,
+    dto: UpdateWorkingSetDTO
+  ): Promise<boolean> {
+    try {
+      const dbModel = WorkingSetMapper.toUpdateDBModel(dto);
+      const fields = Object.keys(dbModel);
+      if (fields.length === 0) {
+        return false; // nothing to update
+      }
+
+      const setClause = fields.map((f) => `${f} = ?`).join(", ");
+      const values = fields.map((f) => (dbModel as any)[f]);
+      values.push(id);
+
+      const [result] = await this.db.execute<ResultSetHeader>(
+        `UPDATE working_set SET ${setClause} WHERE id = ?`,
+        values
+      );
+      return result.affectedRows > 0;
+    } catch (err) {
+      throw new Error(`Error updating working set ${id}`);
+    }
+  }
+
+  /** Delete by ID; return true if a row was deleted */
+  async delete(id: number): Promise<boolean> {
+    try {
+      const [result] = await this.db.execute<ResultSetHeader>(
+        "DELETE FROM working_set WHERE id = ?",
+        [id]
+      );
+      return result.affectedRows > 0;
+    } catch (err) {
+      throw new Error(`Error deleting working set ${id}`);
+    }
+  }
 }
