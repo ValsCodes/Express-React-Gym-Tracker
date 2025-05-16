@@ -3,6 +3,7 @@ import {  WorkingSet,  WorkingSetDTO,  CreateWorkingSetDTO,  UpdateWorkingSetDTO
 export class WorkingSetMapper {
   static toDTO(workingSet: WorkingSet): WorkingSetDTO {
     return {
+      id: workingSet.id,
       exerciseId: workingSet.exercise_id,
       weight: workingSet.weight,
       repetitions: workingSet.repetitions,

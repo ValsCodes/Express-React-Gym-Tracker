@@ -4,15 +4,16 @@ export type WorkingSet = {
   weight: number;
   repetitions: number;
   workout_id: number;
-  comment: string;
+  comment?: string;
 };
 
 export type WorkingSetDTO = {
+  id: number;
   exerciseId: number;
   weight: number;
   repetitions: number;
   workoutId: number;
-  comment: string;
+  comment?: string;
 };
 
 export type CreateWorkingSetDTO = {
@@ -20,13 +21,13 @@ export type CreateWorkingSetDTO = {
   weight: number;
   repetitions: number;
   workoutId: number;
-  comment: string;
+  comment?: string;
 };
 
 export type UpdateWorkingSetDTO = {
-  exerciseId: number;
-  weight: number;
-  repetitions: number;
-  workoutId: number;
-  comment: string;
+  exerciseId?: number;
+  weight?: number;
+  repetitions?: number;
+  workoutId?: number;
+  comment?: string;
 };

@@ -61,7 +61,7 @@ export class WorkoutModel {
       const dbModel = WorkoutMapper.toUpdateDBModel(dto);
       const fields = Object.keys(dbModel);
       if (fields.length === 0) {
-        return false; // nothing to update
+        return false; 
       }
 
       const setClause = fields.map((f) => `${f} = ?`).join(", ");

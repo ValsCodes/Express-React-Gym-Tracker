@@ -20,7 +20,7 @@ exerciseRoutes.post("/exercise", async (req: Request, res: Response) => {
 })
 
 exerciseRoutes.put("/exercise/:id", async (req: Request, res: Response) => {
-    const id = req.params.id;
+    const id:number = Number(req.params.id);
     const data = req.body;
     res.send(await exerciseGroupController.updateExercise(id, data));
 })

@@ -16,6 +16,6 @@ export type CreateExerciseDTO = {
 };
 
 export type UpdateExerciseDTO = {
-  muscleGroupId: number;
-  name: string;
+  muscleGroupId?: number;
+  name?: string;
 }

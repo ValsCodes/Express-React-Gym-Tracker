@@ -8,9 +8,9 @@ export class WorkoutValidator extends CommonValidator{
   ): ErrorResponse {
     const errors: string[] = [];
 
-    if (data.dateAdded == null) {
-      errors.push("Invalid Date provided");
-    }
+    // if (data.dateAdded == null) {
+    //   errors.push("Invalid Date provided");
+    // }
 
     return {
       valid: errors.length === 0,

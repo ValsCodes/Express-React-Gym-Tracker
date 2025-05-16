@@ -48,7 +48,7 @@ export class ExerciseModel {
     }
   }
 
-  async update(id: string, exercise: UpdateExerciseDTO): Promise<boolean> {
+  async update(id: number, exercise: UpdateExerciseDTO): Promise<boolean> {
     try {
       const dbExercise = ExerciseMapper.toUpdateDBModel(exercise);
       const fields = Object.keys(dbExercise);
@@ -56,10 +56,8 @@ export class ExerciseModel {
         return false;
       }
       const setClause = Object.keys(exercise).map((key) => `${key} = ?`).join(",");
-
       const values = [...Object.values(dbExercise), id];
-      const idNumber = Number(id);
-      values.push(idNumber);
+
       const [result] = await this.db.execute<ResultSetHeader>(`UPDATE exercise SET ${setClause} WHERE id = ?`,values);
       return result.affectedRows > 0;
     } catch (e) {

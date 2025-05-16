@@ -38,11 +38,8 @@ export class WorkingSetModel {
   }
 
   async create(dto: CreateWorkingSetDTO): Promise<number> {
-    // TODO doesn't work for some reason ???
     try {
       const dbModel = WorkingSetMapper.toDBModel(dto);
-console.log(dbModel);
-
       const [result] = await this.db.execute<ResultSetHeader>(
         `INSERT INTO working_set
            (exercise_id, weight, repetitions, workout_id, comment)
@@ -52,7 +49,7 @@ console.log(dbModel);
           dbModel.weight,
           dbModel.repetitions,
           dbModel.workout_id,
-          dbModel.comment
+          dbModel.comment ?? null
         ]
       );
       return result.insertId;

@@ -39,15 +39,12 @@ export class ExerciseController {
     };
   }
 
-  async updateExercise(id: string, exercise: UpdateExerciseDTO): Promise<{ success: boolean; message: string }> {
+  async updateExercise(id: number, exercise: UpdateExerciseDTO): Promise<{ success: boolean; message: string }> {
     const idValidation = ExerciseValidator.validateId(id);
     if (!idValidation.valid) {
       throw new Error(`${idValidation.errors.join(", ")}`);
     }
 
-    // TODO validate other fields
-    console.log(id);
-console.log(exercise);
     const success = await this.exerciseModel.update(id, exercise);
 
     return {

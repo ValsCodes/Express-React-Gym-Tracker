@@ -16,6 +16,6 @@ export type CreateWorkoutDTO = {
 };
 
 export type UpdateWorkoutDTO = {
-  description: string;
-  dateAdded: Date;
+  description?: string;
+  dateAdded?: Date;
 };

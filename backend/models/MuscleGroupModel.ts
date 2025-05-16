@@ -50,10 +50,7 @@ export class MuscleGroupModel {
     }
   }
 
-  async update(
-    id: number,
-    dto: UpdateMuscleGroupDTO
-  ): Promise<boolean> {
+  async update(id: number, dto: UpdateMuscleGroupDTO): Promise<boolean> {
     try {
       const dbModel = MuscleGroupMapper.toUpdateDBModel(dto);
       const fields = Object.keys(dbModel);

@@ -29,7 +29,6 @@ export class ExerciseMapper {
 
     if (dto.name !== undefined) {
       result.name = dto.name;
-      console.log(result.name);
     }
 
     return result;
