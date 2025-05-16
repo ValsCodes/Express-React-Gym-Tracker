@@ -7,7 +7,7 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
-import { SortableItem } from '../../components/SortableItem';
+import { SortableItem } from '../../components/SortableItem/SortableItem';
 import { createDragEndHandler } from '../../handlers/handleDragEnd';
 
 interface MuscleGroup {

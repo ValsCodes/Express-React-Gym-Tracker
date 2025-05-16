@@ -1,0 +1,20 @@
+.item {
+  display: flex;
+  justify-self: center;
+  justify-content: space-between;
+  cursor: grab;
+  padding: 0.5rem;
+  width: 500px;
+  margin: 0.25rem 0.625rem;
+  border: 0.0625rem solid #ccc;
+  border-radius: 0.25rem;
+  background: #fff;
+  
+  /* set up GPU-friendly transform */
+  will-change: transform, opacity;
+}
+
+.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
