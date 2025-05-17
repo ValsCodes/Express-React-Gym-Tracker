@@ -9,7 +9,6 @@ export const Navigation: React.FC = () => {
     { name: 'Home', to: '/' },
     { name: 'Exercise', to: '/exercise' },
     { name: 'Muscle Group', to: '/muscle-group' },
-    { name: 'Working Set', to: '/working-set' },
     { name: 'Workout', to: '/workout' },
   ];
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -15,19 +15,21 @@ interface MuscleGroup {
   name: string;
 }
 
-export const MuscleGroupOverview: React.FC = () => {
+export const MuscleGroupOverview = () => {
   const [muscleGroups, setMuscleGroups] = useState<MuscleGroup[]>([]);
-
   const handleDragEnd = createDragEndHandler<MuscleGroup>(setMuscleGroups);
-
   const sensors = useSensors(useSensor(PointerSensor));
 
   useEffect(() => {
-    fetch('http://localhost:3001/muscle-group')
-      .then((res) => res.json())
-      .then((data: MuscleGroup[]) => setMuscleGroups(data))
-      .catch(console.error);
+    getMuscleGroups();
   }, []);
+
+ const getMuscleGroups = async () => {
+   await fetch("http://localhost:3001/muscle-group")
+     .then((res) => res.json())
+     .then((data: MuscleGroup[]) => setMuscleGroups(data))
+     .catch(console.error);
+ };
 
   return (
     <>

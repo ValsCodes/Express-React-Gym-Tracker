@@ -1,0 +1,25 @@
+.itemRow {
+    display: flex;
+    gap:.625rem;
+    justify-content: space-between; 
+    width: 100%;   
+
+    .itemHeader{
+        display: flex;
+        gap:.625rem;
+        justify-content: space-between; 
+    }
+
+    .actionButtons{
+        display: flex;
+        gap:.625rem;
+    }
+}
+
+.header {
+    margin: .3125rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap:.625rem;
+}
