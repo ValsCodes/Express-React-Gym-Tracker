@@ -8,7 +8,7 @@ const app = express();
 app.use(cors())
 app.use(express.json());
 
-app.use(muscleGroupRoutes, exerciseRoutes,workingSetRoutes, workoutRoutes);
+app.use(muscleGroupRoutes, exerciseRoutes, workingSetRoutes, workoutRoutes);
 
 app.listen(3001, () => {
     console.log('Server started')
