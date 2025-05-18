@@ -7,9 +7,9 @@ export const Navigation: React.FC = () => {
   const [open, setOpen] = useState(false);
   const links = [
     { name: 'Home', to: '/' },
-    { name: 'Exercise', to: '/exercise' },
-    { name: 'Muscle Group', to: '/muscle-group' },
-    { name: 'Workout', to: '/workout' },
+    { name: 'Workouts', to: '/workout' },
+    { name: 'Exercises', to: '/exercise' },
+    { name: 'Muscle Groups', to: '/muscle-group' },
   ];
 
   return (

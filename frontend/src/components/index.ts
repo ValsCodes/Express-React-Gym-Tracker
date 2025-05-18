@@ -9,3 +9,5 @@ export { default as SlCarousel } from "@shoelace-style/shoelace/dist/react/carou
 export { default as SlCarouselItem } from "@shoelace-style/shoelace/dist/react/carousel-item/index.js";
 export { default as SlDivider } from "@shoelace-style/shoelace/dist/react/divider/index.js";
 export { default as SlRange } from "@shoelace-style/shoelace/dist/react/range/index.js";
+export{ type SlInputEvent} from "@shoelace-style/shoelace/dist/react/input/index.js";
+export { default as SlFormatDate } from  "@shoelace-style/shoelace/dist/react/format-date/index.js";

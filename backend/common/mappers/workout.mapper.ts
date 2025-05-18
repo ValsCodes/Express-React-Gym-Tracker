@@ -21,7 +21,7 @@ export class WorkoutMapper {
   static toDBModel(dto: CreateWorkoutDTO): Omit<Workout, "id"> {
     return {
       description: dto.description,
-      date_added: dto.dateAdded,
+      date_added: dto.dateAdded ?? new Date,
     };
   }
 

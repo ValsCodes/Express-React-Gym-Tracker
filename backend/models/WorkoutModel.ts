@@ -15,7 +15,6 @@ export class WorkoutModel {
     this.db = new Database().conn;
   }
 
-  /** Fetch all workouts */
   async getAll(): Promise<Workout[]> {
     try {
       const [rows] = await this.db.query<Workout[] & RowDataPacket[]>(
@@ -27,7 +26,6 @@ export class WorkoutModel {
     }
   }
 
-  /** Fetch one workout by its numeric ID */
   async getById(id: number): Promise<Workout | null> {
     try {
       const [rows] = await this.db.execute<Workout[] & RowDataPacket[]>(
@@ -40,7 +38,6 @@ export class WorkoutModel {
     }
   }
 
-  /** Insert a new workout, return its new ID */
   async create(dto: CreateWorkoutDTO): Promise<number> {
     try {
       const dbModel = WorkoutMapper.toDBModel(dto);
@@ -55,7 +52,6 @@ export class WorkoutModel {
     }
   }
 
-  /** Update only provided fields; return true if at least one row was changed */
   async update(id: number, dto: UpdateWorkoutDTO): Promise<boolean> {
     try {
       const dbModel = WorkoutMapper.toUpdateDBModel(dto);
