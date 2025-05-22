@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SortableItem } from "../../components";
+import { SortableItem } from "../../components/index.ts";
 import {
   DndContext,
   closestCenter,
@@ -11,26 +11,15 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { createDragEndHandler } from "../../handlers/handleDragEnd";
+import { createDragEndHandler } from "../../handlers/handleDragEnd.ts";
 import { SlButton, SlInput } from "../../components/index.ts";
 
 //TODO share style across components
-import styles from "../Workout/styles/WorkoutOverview.module.scss";
+import styles from "./MuscleGroupManager.module.scss";
+import {MuscleGroup, CreateMuscleGroup, EditMuscleGroup} from "../../types/index.ts"
 
-interface MuscleGroup {
-  id: number;
-  name: string;
-}
 
-interface EditMuscleGroup {
-  name?: string;
-}
-
-interface CreateMuscleGroup {
-  name: string;
-}
-
-export const MuscleGroupOverview = () => {
+export const MuscleGroupManager = () => {
   const [muscleGroup, setMuscleGroup] = useState<MuscleGroup[]>([]);
 
   const [editingId, setEditingId] = useState<number | null>(null);

@@ -55,9 +55,11 @@ export class ExerciseModel {
       if (fields.length === 0) {
         return false;
       }
-      const setClause = Object.keys(exercise).map((key) => `${key} = ?`).join(",");
-      const values = [...Object.values(dbExercise), id];
 
+      const setClause = Object.keys(dbExercise).map((key) => `${key} = ?`).join(",");
+      const values = [...Object.values(dbExercise), id];
+      
+      console.log(`UPDATE exercise SET ${setClause} WHERE id = ?`,values);
       const [result] = await this.db.execute<ResultSetHeader>(`UPDATE exercise SET ${setClause} WHERE id = ?`,values);
       return result.affectedRows > 0;
     } catch (e) {

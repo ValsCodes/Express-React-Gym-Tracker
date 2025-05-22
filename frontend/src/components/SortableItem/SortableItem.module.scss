@@ -10,8 +10,7 @@
   border-radius: 0.25rem;
   background: #fff;
   
-  /* set up GPU-friendly transform */
-  will-change: transform, opacity;
+  // will-change: transform, opacity;
 }
 
 .dragging {

@@ -22,7 +22,6 @@ export class ExerciseMapper {
 
   static toUpdateDBModel(dto: UpdateExerciseDTO  ): Partial<Omit<Exercise, "id">> {
     const result: Partial<Omit<Exercise, "id">> = {};
-
     if (dto.muscleGroupId !== undefined) {
       result.muscle_group_id = dto.muscleGroupId;
     }

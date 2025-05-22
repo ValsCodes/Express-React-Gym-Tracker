@@ -10,6 +10,8 @@ export class ExerciseValidator extends CommonValidator {
       errors.push("Exercise name must be a string with at least 3 characters");
     }
 
+    if(data.muscleGroupId !== null)
+    {
     const numMuscleGroupId = Number(data.muscleGroupId);
     if (
       isNaN(numMuscleGroupId) ||
@@ -17,6 +19,7 @@ export class ExerciseValidator extends CommonValidator {
       !Number.isInteger(numMuscleGroupId)
     ) {
       errors.push("Invalid Muscle Group ID provided");
+    }
     }
 
     return {

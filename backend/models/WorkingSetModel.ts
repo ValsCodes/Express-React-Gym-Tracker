@@ -37,6 +37,17 @@ export class WorkingSetModel {
     }
   }
 
+   async getByWorkoutId(workoutId: number): Promise<WorkingSet[]> {
+    try {
+      const [rows] = await this.db.query<WorkingSet[] & RowDataPacket[]>(
+        `SELECT * FROM working_set where workout_id = ?`, [workoutId] 
+      );
+      return rows;
+    } catch (err) {
+      throw new Error(`Error fetching working sets for workout id ${workoutId}`);
+    }
+  }
+
   async create(dto: CreateWorkingSetDTO): Promise<number> {
     try {
       const dbModel = WorkingSetMapper.toDBModel(dto);

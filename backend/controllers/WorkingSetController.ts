@@ -25,6 +25,14 @@ export class WorkingSetController {
     return ws ? WorkingSetMapper.toDTO(ws) : null;
   }
 
+    async getByWorkoutId(workoutId: number): Promise<WorkingSetDTO[]> {
+
+    const all = await this.model.getByWorkoutId(workoutId);
+    
+    return WorkingSetMapper.toDTOList(all);
+  }
+
+
   async createWorkingSet(
     dto: CreateWorkingSetDTO
   ): Promise<{ id: number; message: string }> {

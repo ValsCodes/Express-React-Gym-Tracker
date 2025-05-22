@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SortableItem } from "../../components";
+import { SortableItem } from "../../components/index.ts";
 import {
   DndContext,
   closestCenter,
@@ -11,27 +11,15 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { createDragEndHandler } from "../../handlers/handleDragEnd";
+import { createDragEndHandler } from "../../handlers/handleDragEnd.ts";
 import { useNavigate } from "react-router-dom";
 import { SlButton, SlInput } from "../../components/index.ts";
-import styles from "./styles/WorkoutOverview.module.scss";
+import styles from "./WorkoutManager.module.scss";
+import {Workout, EditWorkout, CreateWorkout} from "../../types/index.ts"
 
-interface Workout {
-  id: number;
-  description: string;
-  dateAdded: string;
-}
 
-interface EditWorkout {
-  description?: string;
-}
 
-interface CreateWorkout {
-  description: string;
-  dateAdded?: Date;
-}
-
-export const WorkoutOverview= () => {
+export const WorkoutManager= () => {
   const [workout, setWorkout] = useState<Workout[]>([]);
 
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -44,11 +32,8 @@ export const WorkoutOverview= () => {
     description: ""
   });
 
-
-
   const handleDragEnd = createDragEndHandler<Workout>(setWorkout);
   const sensors = useSensors(useSensor(PointerSensor));
-  
   const navigate = useNavigate();
 
 
@@ -146,14 +131,14 @@ export const WorkoutOverview= () => {
                               .value as string;
                             setCreateDraft((d) => ({ ...d, description: val }));
                           }}
-                        />
-            {/* <SlInput
+                        />                     
+            <SlInput
               type="date"
-              value={createDraft.dateAdded}
+              value={createDraft.description}
               onSlInput={e =>
                 setCreateDraft(d => ({ ...d, dateAdded: e.detail.value }))
               }
-            /> */}
+            />
           </div>
           <div className={styles.actionButtons}>
             <SlButton variant="success" onClick={confirmCreate}>
@@ -185,7 +170,8 @@ export const WorkoutOverview= () => {
           {workout.map((item) => {
             const isEditing = item.id === editingId;
             return (
-              <SortableItem key={item.id} id={item.id}>
+              <SortableItem key={item.id} id={item.id}
+              onDoubleClick={() => navigate(`/workout/${item.id}/working-set`)}>
                 <div className={styles.itemRow}>
                   <div className={styles.itemHeader}>
                     {isEditing ? (
@@ -202,18 +188,6 @@ export const WorkoutOverview= () => {
                             setEditDraft((d) => ({ ...d, description: val }));
                           }}
                         />
-                        {/* <SlInput
-                          type="date"
-                          lang="fr-Fr"
-                          onPointerDown={(e) => e.stopPropagation()}
-                          value={
-                            draft.dateAdded ? draft.dateAdded.slice(0, 10) : ""
-                          }
-                          onSlInput={(e: SlInputEvent) => {
-                            const val = (e.currentTarget as any).value as string;
-                            setDraft((d) => ({ ...d, dateAdded: val }));
-                          }}
-                        /> */}
                       </>
                     ) : (
                       <>
