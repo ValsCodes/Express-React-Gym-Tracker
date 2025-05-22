@@ -56,9 +56,9 @@ export class WorkingSetModel {
            (exercise_id, weight, repetitions, workout_id, comment)
          VALUES (?, ?, ?, ?, ?)`,
         [
-          dbModel.exercise_id,
-          dbModel.weight,
-          dbModel.repetitions,
+          dbModel.exercise_id ?? null,
+          dbModel.weight ?? null,
+          dbModel.repetitions ?? null,
           dbModel.workout_id,
           dbModel.comment ?? null
         ]

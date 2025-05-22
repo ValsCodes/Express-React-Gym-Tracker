@@ -34,7 +34,7 @@
     margin-bottom: 3.125rem;
 
     /* set up GPU-friendly transform */
-    will-change: transform, opacity;
+    // will-change: transform, opacity;
     display: flex;
     gap: .625rem;
     justify-content: space-between;

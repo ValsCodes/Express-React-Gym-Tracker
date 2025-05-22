@@ -11,14 +11,13 @@ export interface EditWorkingSet {
   exerciseId?: number;
   weight?: number;
   repetitions?: number;
-  workoutId?: number;
   comment?: string;
 }
 
 export interface CreateWorkingSet {
-  exerciseId: number;
-  weight: number;
-  repetitions: number;
+  exerciseId?: number;
+  weight?: number;
+  repetitions?: number;
   workoutId: number;
   comment?: string;
 }

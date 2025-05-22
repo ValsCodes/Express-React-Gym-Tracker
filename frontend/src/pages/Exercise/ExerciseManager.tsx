@@ -185,6 +185,7 @@ export const ExerciseManager = () => {
               value={createDraft.name ?? ""}
               placeholder="Exercise"
               onKeyDown={(e) => e.stopPropagation()}
+                          onKeyUp={(e) => e.stopPropagation()}
               onSlInput={(e) => {
                 const val = (e.currentTarget as any).value as string;
                 setCreateDraft((d) => ({ ...d, name: val }));
@@ -221,6 +222,9 @@ export const ExerciseManager = () => {
             </SlButton>
             <SlButton
               variant="danger"
+                              onPointerDown={(e) => e.stopPropagation()}
+                onKeyDown={(e) => e.stopPropagation()}
+                onKeyUp={(e) => e.stopPropagation()}
               onClick={() => {
                 cancelCreateOperation();
               }}
@@ -271,7 +275,6 @@ export const ExerciseManager = () => {
                             >
                               {editLabel.name}
                             </SlButton>
-
                             <SlMenu
                               onSlSelect={handleSelectEdit}
                               onPointerDown={(e) => e.stopPropagation()}
@@ -310,6 +313,8 @@ export const ExerciseManager = () => {
                         <SlButton
                           variant="success"
                           onPointerDown={(e) => e.stopPropagation()}
+                          onKeyDown={(e) => e.stopPropagation()}
+                          onKeyUp={(e) => e.stopPropagation()}
                           onClick={confirmEdit}
                         >
                           Confirm
@@ -317,6 +322,8 @@ export const ExerciseManager = () => {
                         <SlButton
                           variant="danger"
                           onPointerDown={(e) => e.stopPropagation()}
+                          onKeyDown={(e) => e.stopPropagation()}
+                          onKeyUp={(e) => e.stopPropagation()}
                           onClick={cancelEditOperation}
                         >
                           Cancel
@@ -327,6 +334,8 @@ export const ExerciseManager = () => {
                         <SlButton
                           variant="success"
                           onPointerDown={(e) => e.stopPropagation()}
+                          onKeyDown={(e) => e.stopPropagation()}
+                          onKeyUp={(e) => e.stopPropagation()}
                           onClick={() => startEdit(item)}
                         >
                           Edit
@@ -334,6 +343,8 @@ export const ExerciseManager = () => {
                         <SlButton
                           variant="danger"
                           onPointerDown={(e) => e.stopPropagation()}
+                          onKeyDown={(e) => e.stopPropagation()}
+                          onKeyUp={(e) => e.stopPropagation()}
                           onClick={() => deleteExercise(item.id)}
                         >
                           Delete

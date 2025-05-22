@@ -26,12 +26,12 @@ export const WorkingSetManager = () => {
   const [editDraft, setEditDraft] = useState<Partial<Omit<WorkingSet, "id">>>({});
   const [editLabel, setEditLabel] = useState<{    name: string;    exerciseId: number;  }>({ name: "Exercise", exerciseId: 0 });
   const [editLabelExercise, setEditLabelExercise] = useState<{    name: string;    exerciseId: number;  }>({ name: "Exercise", exerciseId: 0 });
-  const [editLabelMuscleGroup, setEditLabelMuscleGroup] = useState<{    name: string;    exerciseId: number;  }>({ name: "Exercise", exerciseId: 0 });
+  const [editLabelMuscleGroup, setEditLabelMuscleGroup] = useState<{    name: string;    muscleGroupId: number;  }>({ name: "Muscle Group", muscleGroupId: 0 });
 
   const [isCreating, setIsCreating] = useState(false);
-  const [createDraft, setCreateDraft] = useState<{}>({});
-  const [createLabelExercise, setCreateLabelExercise] = useState<{    name: string;    exerciseId: number;  }>({ name: "Exercise", exerciseId: 0 });
-  const [createLabelMuscleGroup, setCreateLabelMuscleGroup] = useState<{    name: string;    exerciseId: number;  }>({ name: "Exercise", exerciseId: 0 });
+  const [createDraft, setCreateDraft] = useState<Partial<Omit<WorkingSet, "id">>>({});
+  const [createLabelExercise, setCreateLabelExercise] = useState<{name: string; exerciseId: number;}>({ name: "Exercise", exerciseId: 0 });
+  const [createLabelMuscleGroup, setCreateLabelMuscleGroup] = useState<{name: string; muscleGroupId: number;}>({ name: "Muscle Group", muscleGroupId: 0 });
 
   useEffect(() => {
     getWorkingSetsForWorkout();
@@ -61,21 +61,27 @@ export const WorkingSetManager = () => {
     };
 
   const confirmCreate = async () => {
-    //   if (!createDraft.description) return;
+    const idNumber = Number(id);
+      if (isNaN(idNumber) || idNumber <= 0) return;
 
-    //   const payload:CreateWorkingSet= {
-    //  };
+      const payload: CreateWorkingSet = {
+        workoutId: idNumber,
+        comment: createDraft.comment,
+        exerciseId: createDraft.exerciseId,
+        weight: Number(createDraft.weight),
+        repetitions: Number(createDraft.repetitions),
+      };
 
-    // await fetch("http://localhost:3001/workout", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(payload)
-    // }).then(r => r.json());
+    await fetch("http://localhost:3001/working-set", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).then(r => r.json());
 
     await getWorkingSetsForWorkout();
 
     setIsCreating(false);
-    setCreateDraft({ description: "" });
+    setCreateDraft({ });
   };
 
   const confirmEdit = async () => {
@@ -83,9 +89,12 @@ export const WorkingSetManager = () => {
 
     const data: EditWorkingSet = {
       exerciseId: editDraft.exerciseId,
+      weight: editDraft.weight,
+      repetitions: editDraft.repetitions,
+      comment: editDraft.comment,
     };
 
-    await fetch(`http://localhost:3001/workout/${editingId}`, {
+    await fetch(`http://localhost:3001/working-set/${editingId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -118,14 +127,38 @@ export const WorkingSetManager = () => {
     setEditDraft({});
   };
 
-  const handleSelectEdit = (event: CustomEvent) => {
+  const handleSelectEditExercise = (event: CustomEvent) => {
     const id = event.detail.item.value as number;
 
     const label: string = exercises.find((x) => x.id == id)?.name ?? "";
-    setEditLabel({ name: label, exerciseId: id });
+    setEditLabelExercise({ name: label, exerciseId: id });
 
     setEditDraft((d) => ({ ...d, exerciseId: id }));
   };
+
+    const handleSelectEditMuscleGroup = (event: CustomEvent) => {
+    const id = event.detail.item.value as number;
+
+    const label: string = muscleGroups.find((x) => x.id == id)?.name ?? "";
+    setEditLabelMuscleGroup({ name: label, muscleGroupId: id });
+  };
+
+    const handleSelectCreateExercise = (event: CustomEvent) => {
+    const id = event.detail.item.value as number;
+
+    const label: string = exercises.find((x) => x.id == id)?.name ?? "";
+    setCreateLabelExercise({ name: label, exerciseId: id });
+
+    setCreateDraft((d) => ({ ...d, exerciseId: id }));
+  };
+
+      const handleSelectCreateMuscleGroup = (event: CustomEvent) => {
+    const id = event.detail.item.value as number;
+
+    const label: string = muscleGroups.find((x) => x.id == id)?.name ?? "";
+    setCreateLabelMuscleGroup({ name: label, muscleGroupId: id });
+  };
+
 
   return (
     <div>
@@ -143,7 +176,7 @@ export const WorkingSetManager = () => {
                         <p>Weight</p>
                         <SlInput
                           className={styles.numberInput}
-                          value={editDraft.weight?.toString() ?? "0"}
+                          value={createDraft.weight?.toString() ?? "0"}
                           placeholder="Weight"
                           type="number"
                           onPointerDown={(e) => e.stopPropagation()}
@@ -152,13 +185,13 @@ export const WorkingSetManager = () => {
                           onSlInput={(e) => {
                             const val = (e.currentTarget as any)
                               .value as number;
-                            setEditDraft((d) => ({ ...d, weight: val }));
+                            setCreateDraft((d) => ({ ...d, weight: val }));
                           }}
                         />
                         <p>Repetitions</p>
                         <SlInput
                           className={styles.numberInput}
-                          value={editDraft.repetitions?.toString() ?? "0"}
+                          value={createDraft.repetitions?.toString() ?? "0"}
                           placeholder="Repetitions"
                           type="number"
                           onPointerDown={(e) => e.stopPropagation()}
@@ -167,7 +200,7 @@ export const WorkingSetManager = () => {
                           onSlInput={(e) => {
                             const val = (e.currentTarget as any)
                               .value as number;
-                            setEditDraft((d) => ({ ...d, repetitions: val }));
+                            setCreateDraft((d) => ({ ...d, repetitions: val }));
                           }}
                         />
 
@@ -179,20 +212,17 @@ export const WorkingSetManager = () => {
                             onKeyDown={(e) => e.stopPropagation()}
                             onKeyUp={(e) => e.stopPropagation()}
                           >
-                            {editLabel.name}
+                            {createLabelExercise.name}
                           </SlButton>
 
                           <SlMenu
-                            onSlSelect={handleSelectEdit}
+                            onSlSelect={handleSelectCreateExercise}
                             onPointerDown={(e) => e.stopPropagation()}
                             onKeyDown={(e) => e.stopPropagation()}
                             onKeyUp={(e) => e.stopPropagation()}
                           >
                             {exercises.map((opt) => (
-                              <SlMenuItem
-                                key={opt.id}
-                                value={opt.id.toString()}
-                              >
+                              <SlMenuItem key={opt.id} value={opt.id.toString()}>
                                 {opt.name}
                               </SlMenuItem>
                             ))}
@@ -206,19 +236,16 @@ export const WorkingSetManager = () => {
                             onKeyDown={(e) => e.stopPropagation()}
                             onKeyUp={(e) => e.stopPropagation()}
                           >
-                            {editLabel.name}
+                            {createLabelMuscleGroup.name}
                           </SlButton>
 
                           <SlMenu
-                            onSlSelect={handleSelectEdit}
+                            onSlSelect={handleSelectCreateMuscleGroup}
                             onPointerDown={(e) => e.stopPropagation()}
                             onKeyDown={(e) => e.stopPropagation()}
                             onKeyUp={(e) => e.stopPropagation()}
                           >
-                            {muscleGroups.map((opt) => (
-                              <SlMenuItem
-                                key={opt.id}
-                                value={opt.id.toString()}
+                            {muscleGroups.map((opt) => (<SlMenuItem key={opt.id} value={opt.id.toString()}
                               >
                                 {opt.name}
                               </SlMenuItem>
@@ -227,7 +254,7 @@ export const WorkingSetManager = () => {
                         </SlDropdown>
 
                         <SlInput
-                          value={editDraft.comment?.toString() ?? ""}
+                          value={createDraft.comment?.toString() ?? ""}
                           placeholder="Comment"
                           onPointerDown={(e) => e.stopPropagation()}
                           onKeyDown={(e) => e.stopPropagation()}
@@ -235,7 +262,7 @@ export const WorkingSetManager = () => {
                           onSlInput={(e) => {
                             const val = (e.currentTarget as any)
                               .value as string;
-                            setEditDraft((d) => ({ ...d, comment: val }));
+                            setCreateDraft((d) => ({ ...d, comment: val }));
                           }}
                         />
                       </>}
@@ -248,7 +275,7 @@ export const WorkingSetManager = () => {
               variant="danger"
               onClick={() => {
                 setIsCreating(false);
-                setCreateDraft({ description: "" });
+                setCreateDraft({ comment: "" });
               }}
             >
               Cancel
@@ -313,11 +340,11 @@ export const WorkingSetManager = () => {
                             onKeyDown={(e) => e.stopPropagation()}
                             onKeyUp={(e) => e.stopPropagation()}
                           >
-                            {editLabel.name}
+                            {editLabelExercise.name}
                           </SlButton>
 
                           <SlMenu
-                            onSlSelect={handleSelectEdit}
+                            onSlSelect={handleSelectEditExercise}
                             onPointerDown={(e) => e.stopPropagation()}
                             onKeyDown={(e) => e.stopPropagation()}
                             onKeyUp={(e) => e.stopPropagation()}
@@ -340,16 +367,16 @@ export const WorkingSetManager = () => {
                             onKeyDown={(e) => e.stopPropagation()}
                             onKeyUp={(e) => e.stopPropagation()}
                           >
-                            {editLabel.name}
+                            {editLabelMuscleGroup.name}
                           </SlButton>
 
                           <SlMenu
-                            onSlSelect={handleSelectEdit}
+                            onSlSelect={handleSelectEditMuscleGroup}
                             onPointerDown={(e) => e.stopPropagation()}
                             onKeyDown={(e) => e.stopPropagation()}
                             onKeyUp={(e) => e.stopPropagation()}
                           >
-                            {exercises.map((opt) => (
+                            {muscleGroups.map((opt) => (
                               <SlMenuItem
                                 key={opt.id}
                                 value={opt.id.toString()}
@@ -392,12 +419,16 @@ export const WorkingSetManager = () => {
                         <SlButton
                           variant="success"
                           onPointerDown={(e) => e.stopPropagation()}
+                          onKeyDown={(e) => e.stopPropagation()}
+                          onKeyUp={(e) => e.stopPropagation()}
                           onClick={confirmEdit}
                         >
                           Confirm
                         </SlButton>
                         <SlButton
                           variant="danger"
+                          onKeyDown={(e) => e.stopPropagation()}
+                          onKeyUp={(e) => e.stopPropagation()}
                           onPointerDown={(e) => e.stopPropagation()}
                           onClick={cancelOperation}
                         >
@@ -408,12 +439,16 @@ export const WorkingSetManager = () => {
                       <>
                         <SlButton
                           variant="success"
+                          onKeyDown={(e) => e.stopPropagation()}
+                          onKeyUp={(e) => e.stopPropagation()}
                           onPointerDown={(e) => e.stopPropagation()}
                           onClick={() => startEdit(item)}
                         >
                           Edit
                         </SlButton>
                         <SlButton
+                        onKeyDown={(e) => e.stopPropagation()}
+                          onKeyUp={(e) => e.stopPropagation()}
                           variant="danger"
                           onPointerDown={(e) => e.stopPropagation()}
                           onClick={() => deleteWorkout(item.id)}

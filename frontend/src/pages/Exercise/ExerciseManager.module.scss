@@ -3,7 +3,6 @@
     gap: .625rem;
     justify-content: space-between;
     width: 100%;
-     z-index: 2147483646;
 
     .itemHeader {
         display: flex;
@@ -15,10 +14,6 @@
         display: flex;
         gap: .625rem;
     }
-}
-
-.top-dropdown {
-  z-index: 2147483647;
 }
 
 .addItemRow {
@@ -33,8 +28,6 @@
     background: #fff;
     margin-bottom: 3.125rem;
 
-    /* set up GPU-friendly transform */
-    // will-change: transform, opacity;
     display: flex;
     gap: .625rem;
     justify-content: space-between;
@@ -45,7 +38,6 @@
         display: flex;
         gap: .625rem;
         justify-content: space-between;
-        overflow: visible;
     }
 
     .actionButtons {
