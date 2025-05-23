@@ -1,4 +1,4 @@
-import { useEffect, useState} from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SortableItem } from "../../components/index.ts";
 import {
   DndContext,
@@ -21,7 +21,19 @@ import {
 } from "../../components/index.ts";
 
 import styles from "./ExerciseManager.module.scss";
-import {Exercise, EditExercise, CreateExercise, MuscleGroup} from "../../types/index.ts"
+import {
+  Exercise,
+  EditExercise,
+  CreateExercise,
+  MuscleGroup,
+} from "../../types/index.ts";
+import {
+  fetchExercises,
+  deleteExercise,
+  updateExercise,
+  createExercise,
+} from "../../services/exerciseService.ts";
+import { fetchMuscleGroups } from "../../services/muscleGroupService.ts";
 
 export const ExerciseManager = () => {
   const [exercise, setExercise] = useState<Exercise[]>([]);
@@ -32,6 +44,14 @@ export const ExerciseManager = () => {
     name: "",
   });
 
+    const [isCreating, setIsCreating] = useState(false);
+  const [createDraft, setCreateDraft] = useState<{    name: string;    muscleGroupId: number | null;  }>({    name: "",    muscleGroupId: muscleGroup.length > 0 ? muscleGroup[0].id : null,
+  });
+
+  const [createDropDownLabel, setCreateDropDownLabel] = useState<{    name: string;    muscleGroupId: number | null;  }>({ name: "Muscle Group", muscleGroupId: null });
+
+  const [editLabel, setEditLabel] = useState<{    name: string;    muscleGroupId: number | null;  }>({ name: "Muscle Group", muscleGroupId: 0 });
+
   const handleDragEnd = createDragEndHandler<Exercise>(setExercise);
   const sensors = useSensors(useSensor(PointerSensor));
 
@@ -40,39 +60,45 @@ export const ExerciseManager = () => {
     getMuscleGroups();
   }, []);
 
-  const getExercise = async () => {
-    await fetch("http://localhost:3001/exercise")
-      .then((res) => res.json())
-      .then((data: Exercise[]) => setExercise(data))
-      .catch(console.error);
-  };
+  const getExercise = useCallback(async () => {
+    try {
+      const data = await fetchExercises();
+      const normalized = data.map((ex) => ({
+        ...ex,
+        muscleGroupId: ex.muscleGroupId ?? 0,
+      }));
+      setExercise(normalized);
+    } catch (err) {
+      console.error("Failed to load working sets", err);
+    }
+  }, []);
 
-  const getMuscleGroups = async () => {
-    await fetch("http://localhost:3001/muscle-group")
-      .then((res) => res.json())
-      .then((data: MuscleGroup[]) => {
-        // data.unshift({ id: 0, name: 'Mix' });
-        setMuscleGroup(data);
-      })
-      .catch(console.error);    
-  };
+  const getMuscleGroups = useCallback(async () => {
+    try {
+      const data = await fetchMuscleGroups();
+      data.unshift({ id: 0, name: "No Muscle Group" });
+      setMuscleGroup(data);
+    } catch (err) {
+      console.error("Failed to load Muscle Groups", err);
+    }
+  }, []);
 
   const confirmCreate = async () => {
-    
     console.log(createDraft);
-    if (!createDraft.name && createDraft.muscleGroupId !== null && !muscleGroup.some((x) => x.id === createDraft.muscleGroupId))
+    if (
+      !createDraft.name &&
+      createDraft.muscleGroupId !== null &&
+      !muscleGroup.some((x) => x.id === createDraft.muscleGroupId)
+    )
       return;
 
     const payload: CreateExercise = {
       name: createDraft.name,
-      muscleGroupId: createDraft.muscleGroupId,
+      muscleGroupId:
+        createDraft.muscleGroupId == 0 ? null : createDraft.muscleGroupId,
     };
 
-    await fetch("http://localhost:3001/exercise", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    }).then((r) => r.json());
+    await createExercise(payload);
 
     await getExercise();
 
@@ -85,36 +111,28 @@ export const ExerciseManager = () => {
 
     const data: EditExercise = {
       name: editDraft.name,
-      muscleGroupId: editDraft.muscleGroupId,
+      muscleGroupId:
+        editDraft.muscleGroupId == 0 ? null : editDraft.muscleGroupId,
     };
 
-    await fetch(`http://localhost:3001/exercise/${editingId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    }).then((r) => r.json());
+    console.log(data);
 
+    await updateExercise(editingId, data);
     await getExercise();
 
     setEditingId(null);
     setEditDraft({});
   };
 
-  const deleteExercise = async (id: number) => {
+  const deleteEx = async (id: number) => {
     try {
-      await fetch(`http://localhost:3001/exercise/${id}`, {
-        method: "DELETE",
-      });
+      await deleteExercise(id);
+
       await getExercise();
     } catch (e) {
       console.error("Failed to delete exercise", e);
     }
   };
-
-  const [editLabel, setEditLabel] = useState<{
-    name: string;
-    muscleGroupId: number | null;
-  }>({ name: "Muscle Group", muscleGroupId: null });
 
   const startEdit = (item: Exercise) => {
     setEditingId(item.id);
@@ -139,17 +157,6 @@ export const ExerciseManager = () => {
     setEditDraft({});
   };
 
-  const [isCreating, setIsCreating] = useState(false);
-  const [createDraft, setCreateDraft] = useState<{name: string; muscleGroupId: number | null;}>({
-    name: "",
-    muscleGroupId: muscleGroup.length > 0 ? muscleGroup[0].id : null,
-  });
-
-  const [createDropDownLabel, setCreateDropDownLabel] = useState<{
-    name: string;
-    muscleGroupId: number | null;
-  }>({ name: "Muscle Group", muscleGroupId: null });
-
   const handleSelectCreate = (event: CustomEvent) => {
     const id = event.detail.item.value as number;
 
@@ -163,12 +170,10 @@ export const ExerciseManager = () => {
     setCreateDraft({ name: "", muscleGroupId: null });
   };
 
-
-
   return (
     <div>
       <div className={styles.header}>
-        <h1>Exercise Overview</h1> 
+        <h1>Exercise</h1>
         <SlButton variant="primary" onClick={() => setIsCreating(true)}>
           Add Exercise
         </SlButton>
@@ -183,9 +188,10 @@ export const ExerciseManager = () => {
           <div className={styles.itemHeader}>
             <SlInput
               value={createDraft.name ?? ""}
+              maxlength={20}
               placeholder="Exercise"
               onKeyDown={(e) => e.stopPropagation()}
-                          onKeyUp={(e) => e.stopPropagation()}
+              onKeyUp={(e) => e.stopPropagation()}
               onSlInput={(e) => {
                 const val = (e.currentTarget as any).value as string;
                 setCreateDraft((d) => ({ ...d, name: val }));
@@ -222,9 +228,9 @@ export const ExerciseManager = () => {
             </SlButton>
             <SlButton
               variant="danger"
-                              onPointerDown={(e) => e.stopPropagation()}
-                onKeyDown={(e) => e.stopPropagation()}
-                onKeyUp={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+              onKeyDown={(e) => e.stopPropagation()}
+              onKeyUp={(e) => e.stopPropagation()}
               onClick={() => {
                 cancelCreateOperation();
               }}
@@ -255,6 +261,7 @@ export const ExerciseManager = () => {
                         <SlInput
                           value={editDraft.name ?? ""}
                           placeholder="Exercise"
+                          maxlength={20}
                           onPointerDown={(e) => e.stopPropagation()}
                           onKeyDown={(e) => e.stopPropagation()}
                           onKeyUp={(e) => e.stopPropagation()}
@@ -284,7 +291,7 @@ export const ExerciseManager = () => {
                               {muscleGroup.map((opt) => (
                                 <SlMenuItem
                                   key={opt.id}
-                                  value={opt.id.toString()}
+                                  value={opt.id?.toString()}
                                 >
                                   {opt.name}
                                 </SlMenuItem>
@@ -345,7 +352,7 @@ export const ExerciseManager = () => {
                           onPointerDown={(e) => e.stopPropagation()}
                           onKeyDown={(e) => e.stopPropagation()}
                           onKeyUp={(e) => e.stopPropagation()}
-                          onClick={() => deleteExercise(item.id)}
+                          onClick={() => deleteEx(item.id)}
                         >
                           Delete
                         </SlButton>

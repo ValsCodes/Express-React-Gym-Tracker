@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SortableItem } from "../../components/index.ts";
 import {
   DndContext,
@@ -13,13 +13,13 @@ import {
 } from "@dnd-kit/sortable";
 import { createDragEndHandler } from "../../handlers/handleDragEnd.ts";
 import { SlButton, SlInput } from "../../components/index.ts";
-
-//TODO share style across components
 import styles from "./MuscleGroupManager.module.scss";
 import {MuscleGroup, CreateMuscleGroup, EditMuscleGroup} from "../../types/index.ts"
 
+import {fetchMuscleGroups, updateMuscleGroup, createMuscleGroup, deleteMuscleGroup} from "../../services/muscleGroupService.ts"
 
-export const MuscleGroupManager = () => {
+
+export const MuscleGroupManager = () => { 
   const [muscleGroup, setMuscleGroup] = useState<MuscleGroup[]>([]);
 
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -39,12 +39,15 @@ export const MuscleGroupManager = () => {
     getMuscleGroup();
   }, []);
 
-  const getMuscleGroup = async () => {
-    await fetch("http://localhost:3001/muscle-group")
-      .then((res) => res.json())
-      .then((data: MuscleGroup[]) => setMuscleGroup(data))
-      .catch(console.error);
-  };
+    const getMuscleGroup = useCallback(async () => {
+      try {
+        const data = await fetchMuscleGroups();
+
+        setMuscleGroup(data);
+      } catch (err) {
+        console.error("Failed to load Muscle Groups", err);
+      }
+    }, []);
 
   const confirmCreate = async () => {
     if (!createDraft.name) return;
@@ -53,11 +56,7 @@ export const MuscleGroupManager = () => {
       name: createDraft.name,
     };
 
-    await fetch("http://localhost:3001/muscle-group", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    }).then((r) => r.json());
+    await createMuscleGroup(payload);
 
     await getMuscleGroup();
 
@@ -72,11 +71,7 @@ export const MuscleGroupManager = () => {
       name: editDraft.name,
     };
 
-    await fetch(`http://localhost:3001/muscle-group/${editingId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    }).then((r) => r.json());
+    await updateMuscleGroup(editingId, data);
 
     await getMuscleGroup();
 
@@ -84,11 +79,9 @@ export const MuscleGroupManager = () => {
     setEditDraft({});
   };
 
-  const deleteMuscleGroup = async (id: number) => {
+  const confirmDeleteMuscleGroup = async (id: number) => {
     try {
-      await fetch(`http://localhost:3001/muscle-group/${id}`, {
-        method: "DELETE",
-      });
+      await deleteMuscleGroup(id);
       await getMuscleGroup();
     } catch (e) {
       console.error("Failed to delete muscle group", e);
@@ -108,7 +101,7 @@ export const MuscleGroupManager = () => {
   return (
     <div>
       <div className={styles.header}>
-        <h1>Muscle Group Overview</h1>
+        <h1>Muscle Groups</h1>
         <SlButton variant="primary" onClick={() => setIsCreating(true)}>
           Add Muscle Group
         </SlButton>
@@ -120,6 +113,7 @@ export const MuscleGroupManager = () => {
             <SlInput
               value={createDraft.name ?? ""}
               placeholder="Muscle Group"
+              maxlength={20}
               onKeyDown={(e) => e.stopPropagation()}
               onSlInput={(e) => {
                 const val = (e.currentTarget as any).value as string;
@@ -164,6 +158,7 @@ export const MuscleGroupManager = () => {
                         <SlInput
                           value={editDraft.name ?? ""}
                           placeholder="Muscle Group"
+                          maxlength={20}
                           onPointerDown={(e) => e.stopPropagation()}
                           onKeyDown={(e) => e.stopPropagation()}
                           onKeyUp={(e) => e.stopPropagation()}
@@ -211,7 +206,7 @@ export const MuscleGroupManager = () => {
                         <SlButton
                           variant="danger"
                           onPointerDown={(e) => e.stopPropagation()}
-                          onClick={() => deleteMuscleGroup(item.id)}
+                          onClick={() => confirmDeleteMuscleGroup(item.id)}
                         >
                           Delete
                         </SlButton>

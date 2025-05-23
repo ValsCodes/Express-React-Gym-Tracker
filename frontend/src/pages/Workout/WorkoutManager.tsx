@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SortableItem } from "../../components/index.ts";
 import {
   DndContext,
@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { SlButton, SlInput } from "../../components/index.ts";
 import styles from "./WorkoutManager.module.scss";
 import {Workout, EditWorkout, CreateWorkout} from "../../types/index.ts"
+import {fetchWorkouts, updateWorkout, createWorkout, deleteWorkout} from "../../services/workoutService.ts"
 
 
 
@@ -41,31 +42,30 @@ export const WorkoutManager= () => {
     getWorkouts();
   }, []);
 
-  const getWorkouts = async () => {
-    await fetch("http://localhost:3001/workout")
-      .then((res) => res.json())
-      .then((data: Workout[]) => setWorkout(data))
-      .catch(console.error);
-  };
 
-  const confirmCreate = async () => {
-  if (!createDraft.description) return;
+    const getWorkouts = useCallback(async () => {
+      try {
+        const data = await fetchWorkouts();
 
-  const payload:CreateWorkout = {
-    description: createDraft.description
-  };
+        setWorkout(data);
+      } catch (err) {
+        console.error("Failed to load workouts", err);
+      }
+    }, []);
 
-  await fetch("http://localhost:3001/workout", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  }).then(r => r.json());
+    const confirmCreate = async () => {
+      if (!createDraft.description) return;
 
-  await getWorkouts();
+      const payload: CreateWorkout = {
+        description: createDraft.description,
+      };
 
-  setIsCreating(false);
-  setCreateDraft({ description: ""});
-  };
+      await createWorkout(payload);
+      await getWorkouts();
+
+      setIsCreating(false);
+      setCreateDraft({ description: "" });
+    };
 
   const confirmEdit = async () => {
     if (editingId == null) return;
@@ -74,23 +74,16 @@ export const WorkoutManager= () => {
       description: editDraft.description,
     };
 
-    await fetch(`http://localhost:3001/workout/${editingId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    }).then((r) => r.json());
-
+    await updateWorkout(editingId, data);
     await getWorkouts();
 
     setEditingId(null);
     setEditDraft({});
   };
 
-  const deleteWorkout = async (id: number) => {
+  const confirmDelete = async (id: number) => {
     try {
-      await fetch(`http://localhost:3001/workout/${id}`, {
-        method: "DELETE",
-      });
+      await deleteWorkout(id)
       await getWorkouts();
     } catch (e) {
       console.error("Failed to delete workout", e);
@@ -110,7 +103,7 @@ export const WorkoutManager= () => {
   return (
     <div>
       <div className={styles.header}>
-        <h1>Workouts Overview</h1>
+        <h1>Workouts</h1>
         <SlButton variant="primary" onClick={() => setIsCreating(true)}>
           Add Workout
         </SlButton>
@@ -125,20 +118,14 @@ export const WorkoutManager= () => {
 <SlInput
                           value={createDraft.description ?? ""}
                           placeholder="Description"
+                          maxlength={20}
                           onKeyDown={(e) => e.stopPropagation()}
                           onSlInput={(e) => {
                             const val = (e.currentTarget as any)
                               .value as string;
                             setCreateDraft((d) => ({ ...d, description: val }));
                           }}
-                        />                     
-            <SlInput
-              type="date"
-              value={createDraft.description}
-              onSlInput={e =>
-                setCreateDraft(d => ({ ...d, dateAdded: e.detail.value }))
-              }
-            />
+                        />
           </div>
           <div className={styles.actionButtons}>
             <SlButton variant="success" onClick={confirmCreate}>
@@ -146,7 +133,6 @@ export const WorkoutManager= () => {
             </SlButton>
             <SlButton
               variant="danger"
-            
               onClick={() => {
                 setIsCreating(false);
                 setCreateDraft({ description: ""});
@@ -178,6 +164,7 @@ export const WorkoutManager= () => {
                       <>
                         <SlInput
                           value={editDraft.description ?? ""}
+                          maxlength={20}
                           placeholder="Description"
                           onPointerDown={(e) => e.stopPropagation()}
                           onKeyDown={(e) => e.stopPropagation()}
@@ -191,8 +178,7 @@ export const WorkoutManager= () => {
                       </>
                     ) : (
                       <>
-                        <p>{item.description}</p>
-                        <p>{new Date(item.dateAdded).toLocaleDateString()}</p>
+                        <p>{item.description} - {new Date(item.dateAdded).toLocaleDateString()}</p>
                       </>
                     )}
                   </div>
@@ -227,7 +213,7 @@ export const WorkoutManager= () => {
                         <SlButton
                           variant="danger"
                           onPointerDown={(e) => e.stopPropagation()}
-                          onClick={() => deleteWorkout(item.id)}
+                          onClick={() => confirmDelete(item.id)}
                         >
                           Delete
                         </SlButton>

@@ -2,7 +2,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Navigation } from "./components";
 import {
   ExerciseManager,
-  Home,
   MuscleGroupManager,
   NotFound,
   WorkingSetManager,
@@ -25,7 +24,7 @@ function App() {
       <Navigation />
       <div id="container">
         <Routes>
-          <Route path={"/"} element={<Home />} />
+          <Route path={"/"} element={<WorkoutManager />} />
           <Route path={"/exercise"} element={<ExerciseManager/>} />
           <Route path={"/workout"} element={<WorkoutManager />} />
           <Route path={"/muscle-group"} element={<MuscleGroupManager />} />

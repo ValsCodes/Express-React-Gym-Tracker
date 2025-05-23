@@ -45,6 +45,10 @@ export class ExerciseController {
       throw new Error(`${idValidation.errors.join(", ")}`);
     }
 
+    if (exercise.muscleGroupId === 0) {
+      exercise.muscleGroupId = null;
+    }
+
     const success = await this.exerciseModel.update(id, exercise);
 
     return {

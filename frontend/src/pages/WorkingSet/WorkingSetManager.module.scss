@@ -33,13 +33,9 @@
     background: #fff;
     margin-bottom: 3.125rem;
 
-    /* set up GPU-friendly transform */
-    // will-change: transform, opacity;
     display: flex;
     gap: .625rem;
     justify-content: space-between;
-    max-width: 62.5rem;
-    min-width: 29.6875rem;
 
     .itemHeader {
         display: flex;
