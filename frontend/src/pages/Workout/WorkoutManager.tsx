@@ -1,57 +1,42 @@
 import { useCallback, useEffect, useState } from "react";
 import { SortableItem } from "../../components/index.ts";
-import {
-  DndContext,
-  closestCenter,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import {  DndContext,  closestCenter,  PointerSensor,  useSensor,  useSensors,} from "@dnd-kit/core";
+import {  SortableContext,  verticalListSortingStrategy,} from "@dnd-kit/sortable";
 import { createDragEndHandler } from "../../handlers/handleDragEnd.ts";
 import { useNavigate } from "react-router-dom";
 import { SlButton, SlInput } from "../../components/index.ts";
-import styles from "./WorkoutManager.module.scss";
 import {Workout, EditWorkout, CreateWorkout} from "../../types/index.ts"
 import {fetchWorkouts, updateWorkout, createWorkout, deleteWorkout} from "../../services/workoutService.ts"
 
-
+import "./WorkoutManager.module.scss";
 
 export const WorkoutManager= () => {
   const [workout, setWorkout] = useState<Workout[]>([]);
 
   const [editingId, setEditingId] = useState<number | null>(null);
-    const [editDraft, setEditDraft] = useState<Partial<Omit<Workout, 'id' | 'dateAdded'>>>({
-    description: "",
-  })
+  const [editDraft, setEditDraft] = useState<Partial<Omit<Workout, 'id' | 'dateAdded'>>>({    description: "",  })
 
-    const [isCreating, setIsCreating] = useState(false);
-    const [createDraft, setCreateDraft] = useState<{description: string}>({
-    description: ""
-  });
+  const [isCreating, setIsCreating] = useState(false);
+  const [createDraft, setCreateDraft] = useState<{description: string}>({    description: ""  });
 
   const handleDragEnd = createDragEndHandler<Workout>(setWorkout);
   const sensors = useSensors(useSensor(PointerSensor));
   const navigate = useNavigate();
 
 
-  useEffect(() => {
-    getWorkouts();
+  const getWorkouts = useCallback(async () => {
+    try {
+      const data = await fetchWorkouts();
+
+      setWorkout(data);
+    } catch (err) {
+      console.error("Failed to load workouts", err);
+    }
   }, []);
 
+useEffect(() => {  
+  getWorkouts();}, []);
 
-    const getWorkouts = useCallback(async () => {
-      try {
-        const data = await fetchWorkouts();
-
-        setWorkout(data);
-      } catch (err) {
-        console.error("Failed to load workouts", err);
-      }
-    }, []);
 
     const confirmCreate = async () => {
       if (!createDraft.description) return;
@@ -102,7 +87,7 @@ export const WorkoutManager= () => {
 
   return (
     <div>
-      <div className={styles.header}>
+      <div className="page-header">
         <h1>Workouts</h1>
         <SlButton variant="primary" onClick={() => setIsCreating(true)}>
           Add Workout
@@ -113,8 +98,8 @@ export const WorkoutManager= () => {
       </div>
 
 {isCreating && (
-        <div className={styles.addItemRow}>
-          <div className={styles.itemHeader}>
+        <div className="add-item-row">
+          <div className="item-header">
 <SlInput
                           value={createDraft.description ?? ""}
                           placeholder="Description"
@@ -127,7 +112,7 @@ export const WorkoutManager= () => {
                           }}
                         />
           </div>
-          <div className={styles.actionButtons}>
+          <div className="action-buttons">
             <SlButton variant="success" onClick={confirmCreate}>
               Confirm
             </SlButton>
@@ -136,10 +121,7 @@ export const WorkoutManager= () => {
               onClick={() => {
                 setIsCreating(false);
                 setCreateDraft({ description: ""});
-              }}
-            >
-              Cancel
-            </SlButton>
+              }}>Cancel            </SlButton>
           </div>
         </div>
       )}
@@ -158,8 +140,8 @@ export const WorkoutManager= () => {
             return (
               <SortableItem key={item.id} id={item.id}
               onDoubleClick={() => navigate(`/workout/${item.id}/working-set`)}>
-                <div className={styles.itemRow}>
-                  <div className={styles.itemHeader}>
+                <div className="dnd-item-row">
+                  <div className="dnd-item-header">
                     {isEditing ? (
                       <>
                         <SlInput
@@ -183,7 +165,7 @@ export const WorkoutManager= () => {
                     )}
                   </div>
 
-                  <div className={styles.actionButtons}>
+                  <div className="action-buttons">
                     {isEditing ? (
                       <>
                         <SlButton

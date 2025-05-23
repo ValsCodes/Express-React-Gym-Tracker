@@ -5,11 +5,12 @@ import {  SortableContext,  verticalListSortingStrategy,} from "@dnd-kit/sortabl
 import { createDragEndHandler } from "../../handlers/handleDragEnd.ts";
 import { useNavigate, useParams } from "react-router-dom";
 import {  SlButton,  SlInput,  SlMenu,  SlMenuItem,  SlDropdown,} from "../../components/index.ts";
-import styles from "./WorkingSetManager.module.scss";
 import {  WorkingSet,  EditWorkingSet,  CreateWorkingSet,  Exercise,  MuscleGroup,} from "../../types/index.ts";
 import {  fetchWorkingSets,  createWorkingSet,  updateWorkingSet,  deleteWorkingSet,} from "../../services/workingSetService.ts";
 import { fetchExercises } from "../../services/exerciseService.ts";
 import { fetchMuscleGroups } from "../../services/muscleGroupService.ts";
+
+import styles from "./WorkingSetManager.module.scss";
 
 export const WorkingSetManager = () => {
   const { id: workoutId } = useParams();
@@ -23,32 +24,17 @@ export const WorkingSetManager = () => {
   const handleDragEnd = createDragEndHandler<WorkingSet>(setWorkingSets);
 
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [editDraft, setEditDraft] = useState<Partial<Omit<WorkingSet, "id">>>(
-    {}
-  );
-  const [editLabelExercise, setEditLabelExercise] = useState<{
-    name: string;
-    exerciseId: number;
-  }>({ name: "Exercise", exerciseId: 0 });
+  const [editDraft, setEditDraft] = useState<Partial<Omit<WorkingSet, "id">>>({});
+  const [editLabelExercise, setEditLabelExercise] = useState<{    name: string;    exerciseId: number;  }>({ name: "Exercise", exerciseId: 0 });
   const [editExercise, setEditExercise] = useState<Exercise[]>([]);
-  const [editLabelMuscleGroup, setEditLabelMuscleGroup] = useState<{
-    name: string;
-    muscleGroupId: number;
-  }>({ name: "Muscle Group", muscleGroupId: 0 });
+  const [editLabelMuscleGroup, setEditLabelMuscleGroup] = useState<{    name: string;    muscleGroupId: number;  }>({ name: "Muscle Group", muscleGroupId: 0 });
 
   const [isCreating, setIsCreating] = useState(false);
-  const [createDraft, setCreateDraft] = useState<
-    Partial<Omit<WorkingSet, "id">>
-  >({});
-  const [createLabelExercise, setCreateLabelExercise] = useState<{
-    name: string;
-    exerciseId: number;
-  }>({ name: "Exercise", exerciseId: 0 });
+  const [createDraft, setCreateDraft] = useState<    Partial<Omit<WorkingSet, "id">>  >({});
+  const [createLabelExercise, setCreateLabelExercise] = useState<{    name: string;    exerciseId: number;  }>({ name: "Exercise", exerciseId: 0 });
   const [createExercise, setCreateExercise] = useState<Exercise[]>([]);
-  const [createLabelMuscleGroup, setCreateLabelMuscleGroup] = useState<{
-    name: string;
-    muscleGroupId: number;
-  }>({ name: "Muscle Group", muscleGroupId: 0 });
+  const [createLabelMuscleGroup, setCreateLabelMuscleGroup] = useState<{    name: string;    muscleGroupId: number;  }>({ name: "Muscle Group", muscleGroupId: 0 });
+
 
   useEffect(() => {
     loadSets();
@@ -190,7 +176,7 @@ export const WorkingSetManager = () => {
 
   return (
     <div>
-      <div className={styles.header}>
+      <div className="page-header">
         <h1>Working Sets </h1>
         <SlButton variant="primary" onClick={() => setIsCreating(true)}>
           Add Set
@@ -201,15 +187,16 @@ export const WorkingSetManager = () => {
       </div>
 
       {isCreating && (
-        <div className={styles.addItemRow}>
-          <div className={styles.itemHeader}>
+        <div className="add-item-row">
+          <div className="item-header">
             {
               <>
                 <p>Weight</p>
                 <SlInput
-                  className={styles.numberInput}
+                  className="number-input"
                   value={createDraft.weight?.toString() ?? "0"}
-                  placeholder="Weight"
+                  placeholder="kg"
+                  min="0"
                   type="number"
                   onPointerDown={(e) => e.stopPropagation()}
                   onKeyDown={(e) => e.stopPropagation()}
@@ -221,9 +208,10 @@ export const WorkingSetManager = () => {
                 />
                 <p>Repetitions</p>
                 <SlInput
-                  className={styles.numberInput}
+                  className="number-input"
                   value={createDraft.repetitions?.toString() ?? "0"}
-                  placeholder="Repetitions"
+                  placeholder="reps"
+                  min="0"
                   type="number"
                   onPointerDown={(e) => e.stopPropagation()}
                   onKeyDown={(e) => e.stopPropagation()}
@@ -297,7 +285,7 @@ export const WorkingSetManager = () => {
               </>
             }
           </div>
-          <div className={styles.actionButtons}>
+          <div className="action-buttons">
             <SlButton variant="success" onClick={confirmCreate}>
               Confirm
             </SlButton>
@@ -327,15 +315,16 @@ export const WorkingSetManager = () => {
             const isEditing = item.id === editingId;
             return (
               <SortableItem key={item.id} id={item.id}>
-                <div className={styles.itemRow}>
-                  <div className={styles.itemHeader}>
+                <div className="dnd-item-row" style={{ minWidth: "37.5rem" }}>
+                  <div className="dnd-item-header">
                     {isEditing ? (
                       <>
                         <p>Weight</p>
                         <SlInput
-                          className={styles.numberInput}
+                          className="number-input"
                           value={editDraft.weight?.toString() ?? "0"}
-                          placeholder="Weight"
+                          placeholder="kg"
+                          min="0"
                           type="number"
                           onPointerDown={(e) => e.stopPropagation()}
                           onKeyDown={(e) => e.stopPropagation()}
@@ -348,10 +337,11 @@ export const WorkingSetManager = () => {
                         />
                         <p>Repetitions</p>
                         <SlInput
-                          className={styles.numberInput}
+                          className="number-input"
                           value={editDraft.repetitions?.toString() ?? "0"}
-                          placeholder="Repetitions"
+                          placeholder="reps"
                           type="number"
+                          min="0"
                           onPointerDown={(e) => e.stopPropagation()}
                           onKeyDown={(e) => e.stopPropagation()}
                           onKeyUp={(e) => e.stopPropagation()}
@@ -440,7 +430,7 @@ export const WorkingSetManager = () => {
                     )}
                   </div>
 
-                  <div className={styles.actionButtons}>
+                  <div className="action-buttons">
                     {isEditing ? (
                       <>
                         <SlButton

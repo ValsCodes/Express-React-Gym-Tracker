@@ -1,8 +1,8 @@
 import {Workout, CreateWorkout, EditWorkout} from "../types/index.ts"
 
-export async function fetchWorkouts() {
+export async function fetchWorkouts(): Promise<Workout[]> {
   const response = await fetch(`/workout`);
-  return response.json() as Promise<Workout[]>;
+  return response.json();
 }
 
 export async function createWorkout(payload: CreateWorkout) {

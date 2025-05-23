@@ -1,39 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { SortableItem } from "../../components/index.ts";
-import {
-  DndContext,
-  closestCenter,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import {  DndContext,  closestCenter,  PointerSensor,  useSensor,  useSensors,} from "@dnd-kit/core";
+import {  SortableContext,  verticalListSortingStrategy,} from "@dnd-kit/sortable";
 import { createDragEndHandler } from "../../handlers/handleDragEnd.ts";
-import {
-  SlButton,
-  SlInput,
-  SlMenu,
-  SlMenuItem,
-  SlDropdown,
-} from "../../components/index.ts";
-
-import styles from "./ExerciseManager.module.scss";
-import {
-  Exercise,
-  EditExercise,
-  CreateExercise,
-  MuscleGroup,
-} from "../../types/index.ts";
-import {
-  fetchExercises,
-  deleteExercise,
-  updateExercise,
-  createExercise,
-} from "../../services/exerciseService.ts";
+import {  SlButton,  SlInput,  SlMenu,  SlMenuItem,  SlDropdown,} from "../../components/index.ts";
+import {  Exercise,  EditExercise,  CreateExercise,  MuscleGroup,} from "../../types/index.ts";
+import {  fetchExercises,  deleteExercise,  updateExercise,  createExercise,} from "../../services/exerciseService.ts";
 import { fetchMuscleGroups } from "../../services/muscleGroupService.ts";
+
+import "./ExerciseManager.module.scss";
 
 export const ExerciseManager = () => {
   const [exercise, setExercise] = useState<Exercise[]>([]);
@@ -172,7 +147,7 @@ export const ExerciseManager = () => {
 
   return (
     <div>
-      <div className={styles.header}>
+      <div className="page-header">
         <h1>Exercise</h1>
         <SlButton variant="primary" onClick={() => setIsCreating(true)}>
           Add Exercise
@@ -184,8 +159,8 @@ export const ExerciseManager = () => {
       <SlInput  type="search"  placeholder="Search exercises…"/> */}
 
       {isCreating && (
-        <div className={styles.addItemRow}>
-          <div className={styles.itemHeader}>
+        <div className="add-item-row">
+          <div className="item-header">
             <SlInput
               value={createDraft.name ?? ""}
               maxlength={20}
@@ -222,7 +197,7 @@ export const ExerciseManager = () => {
               </SlMenu>
             </SlDropdown>
           </div>
-          <div className={styles.actionButtons}>
+          <div className="action-buttons">
             <SlButton variant="success" onClick={confirmCreate}>
               Confirm
             </SlButton>
@@ -254,8 +229,8 @@ export const ExerciseManager = () => {
             const isEditing = item.id === editingId;
             return (
               <SortableItem key={item.id} id={item.id}>
-                <div className={styles.itemRow}>
-                  <div className={styles.itemHeader}>
+                <div className="dnd-item-row">
+                  <div className="dnd-item-header">
                     {isEditing ? (
                       <>
                         <SlInput
@@ -314,7 +289,7 @@ export const ExerciseManager = () => {
                     )}
                   </div>
 
-                  <div className={styles.actionButtons}>
+                  <div className="action-buttons">
                     {isEditing ? (
                       <>
                         <SlButton

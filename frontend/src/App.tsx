@@ -9,6 +9,7 @@ import {
 } from "./pages";
 
 import "./App.scss";
+import "./styles/globals.scss";
 
 import "@shoelace-style/shoelace/dist/themes/light.css";
 import { setBasePath } from "@shoelace-style/shoelace/dist/utilities/base-path.js";

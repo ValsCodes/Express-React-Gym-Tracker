@@ -1,37 +1,22 @@
 import { useCallback, useEffect, useState } from "react";
 import { SortableItem } from "../../components/index.ts";
-import {
-  DndContext,
-  closestCenter,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import {  DndContext,  closestCenter,  PointerSensor,  useSensor,  useSensors,} from "@dnd-kit/core";
+import {  SortableContext,  verticalListSortingStrategy,} from "@dnd-kit/sortable";
 import { createDragEndHandler } from "../../handlers/handleDragEnd.ts";
 import { SlButton, SlInput } from "../../components/index.ts";
-import styles from "./MuscleGroupManager.module.scss";
 import {MuscleGroup, CreateMuscleGroup, EditMuscleGroup} from "../../types/index.ts"
-
 import {fetchMuscleGroups, updateMuscleGroup, createMuscleGroup, deleteMuscleGroup} from "../../services/muscleGroupService.ts"
+
+import "./MuscleGroupManager.module.scss";
 
 
 export const MuscleGroupManager = () => { 
   const [muscleGroup, setMuscleGroup] = useState<MuscleGroup[]>([]);
 
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [editDraft, setEditDraft] = useState<Partial<Omit<MuscleGroup, "id">>>({
-    name: "",
-  });
-
+  const [editDraft, setEditDraft] = useState<Partial<Omit<MuscleGroup, "id">>>({    name: "",  });
   const [isCreating, setIsCreating] = useState(false);
-  const [createDraft, setCreateDraft] = useState<{ name: string }>({
-    name: "",
-  });
-
+  const [createDraft, setCreateDraft] = useState<{ name: string }>({    name: "",  });
   const handleDragEnd = createDragEndHandler<MuscleGroup>(setMuscleGroup);
   const sensors = useSensors(useSensor(PointerSensor));
 
@@ -100,7 +85,7 @@ export const MuscleGroupManager = () => {
 
   return (
     <div>
-      <div className={styles.header}>
+      <div className="page-header">
         <h1>Muscle Groups</h1>
         <SlButton variant="primary" onClick={() => setIsCreating(true)}>
           Add Muscle Group
@@ -108,8 +93,8 @@ export const MuscleGroupManager = () => {
       </div>
 
       {isCreating && (
-        <div className={styles.addItemRow}>
-          <div className={styles.itemHeader}>
+        <div className="add-item-row">
+          <div className="item-header">
             <SlInput
               value={createDraft.name ?? ""}
               placeholder="Muscle Group"
@@ -121,7 +106,7 @@ export const MuscleGroupManager = () => {
               }}
             />
           </div>
-          <div className={styles.actionButtons}>
+          <div className="action-buttons">
             <SlButton variant="success" onClick={confirmCreate}>
               Confirm
             </SlButton>
@@ -151,8 +136,8 @@ export const MuscleGroupManager = () => {
             const isEditing = item.id === editingId;
             return (
               <SortableItem key={item.id} id={item.id}>
-                <div className={styles.itemRow}>
-                  <div className={styles.itemHeader}>
+                <div className="dnd-item-row">
+                  <div className="dnd-item-header">
                     {isEditing ? (
                       <>
                         <SlInput
@@ -176,7 +161,7 @@ export const MuscleGroupManager = () => {
                     )}
                   </div>
 
-                  <div className={styles.actionButtons}>
+                  <div className="action-buttons">
                     {isEditing ? (
                       <>
                         <SlButton

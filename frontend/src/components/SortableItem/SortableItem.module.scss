@@ -4,13 +4,12 @@
   cursor: grab;
   padding: 0.5rem;
   margin: 0.25rem 0.625rem;
-  max-width: 62.5rem;
-  min-width: 29.6875rem;
   border: 0.0625rem solid #ccc;
   border-radius: 0.25rem;
   background: #fff;
-  
-  // will-change: transform, opacity;
+
+  max-width: 62.5rem;
+  min-width: 29.6875rem;
 }
 
 .dragging {
