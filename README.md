@@ -1,4 +1,4 @@
-# Express JS + React Web Gym Tracker 💪
+# Express + React Web Gym Tracker 💪
 
 Welcome to the **Web Gym Tracker**, a full-stack application built with Express.js and React to help fitness enthusiasts log workouts and track progress over time.
 
@@ -8,6 +8,7 @@ Welcome to the **Web Gym Tracker**, a full-stack application built with Express.
 
 * **Workout Logging**: Create, read, update, and delete workouts, muscle groups, exercises and workout sets with ease.
 * **RESTful API**: Well-structured endpoints for seamless front-end/back-end communication.
+* **TypeScript**: Entire project written in TypeScript with strict mode for enhanced type safety and maintainability.
 
 ---
 
@@ -33,8 +34,7 @@ Welcome to the **Web Gym Tracker**, a full-stack application built with Express.
 1. **Clone the repo**
 
    ```bash
-   git clone https://github.com/your-username/web-gym-tracker.git
-   cd web-gym-tracker
+   gh repo clone ValsCodes/Express-React-Gym-Tracker
    ```
 
 2. **Install dependencies**
@@ -48,11 +48,7 @@ Welcome to the **Web Gym Tracker**, a full-stack application built with Express.
    ```
 
 3. **Configure environment variables**
-   * Add your MySQL connection string in the file Database in the backend
-   * Install Dependencies
-   ```bash
-   npm i
-   ```
+   * Add your MySQL connection string in the file **Database** in the **backend**
 ---
 
 4. **Run the application**
@@ -73,7 +69,7 @@ Welcome to the **Web Gym Tracker**, a full-stack application built with Express.
 ## 📦 Usage
 
 * Navigate to the **Muscle Groups** page and add your own muscle groups.
-* Navigate to the **Exercise** page and add your own exerices.
+* Navigate to the **Exercise** page and add your own exercises.
 * Navigate to the **Workouts** page to create a workouts.
 * Double click any of your workouts to view and add your workout sets.
 
