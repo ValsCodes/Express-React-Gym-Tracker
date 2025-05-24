@@ -1,4 +1,4 @@
-# Express + React Web Gym Tracker 💪
+# Typescript Express + React Web Gym Tracker 💪
 
 Welcome to the **Web Gym Tracker**, a full-stack application built with Express.js and React to help fitness enthusiasts log workouts and track progress over time.
 
