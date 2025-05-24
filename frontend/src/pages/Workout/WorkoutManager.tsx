@@ -28,7 +28,7 @@ export const WorkoutManager= () => {
     try {
       const data = await fetchWorkouts();
 
-      setWorkout(data);
+      setWorkout(data.sort((a, b) => b.id - a.id));
     } catch (err) {
       console.error("Failed to load workouts", err);
     }
@@ -89,12 +89,14 @@ useEffect(() => {
     <div>
       <div className="page-header">
         <h1>Workouts</h1>
+        <div className="action-buttons">
         <SlButton variant="primary" onClick={() => setIsCreating(true)}>
-          Add Workout
+          Add
         </SlButton>
         {/* <SlButton variant="success" onClick={async () => await getWorkouts()}>
           Refresh
         </SlButton> */}
+        </div>
       </div>
 
 {isCreating && (

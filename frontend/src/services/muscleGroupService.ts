@@ -1,8 +1,8 @@
 import {MuscleGroup, CreateMuscleGroup, EditMuscleGroup} from "../types/index.ts"
 
-export async function fetchMuscleGroups() {
+export async function fetchMuscleGroups() : Promise<MuscleGroup[]> {
   const response = await fetch(`/muscle-group`);
-  return response.json() as Promise<MuscleGroup[]>;
+  return response.json();
 }
 
 export async function createMuscleGroup(payload: CreateMuscleGroup) {

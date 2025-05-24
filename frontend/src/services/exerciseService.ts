@@ -1,8 +1,8 @@
 import {Exercise, CreateExercise, EditExercise} from "../types/index.ts"
 
-export async function fetchExercises() {
+export async function fetchExercises(): Promise<Exercise[]> {
   const response = await fetch(`/exercise`);
-  return response.json() as Promise<Exercise[]>;
+  return response.json();
 }
 
 export async function createExercise(payload: CreateExercise) {

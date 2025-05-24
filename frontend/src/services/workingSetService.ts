@@ -1,8 +1,8 @@
 import {WorkingSet, CreateWorkingSet, EditWorkingSet} from "../types/index.ts"
 
-export async function fetchWorkingSets(workoutId: number) {
+export async function fetchWorkingSets(workoutId: number) : Promise<WorkingSet[]> {
   const response = await fetch(`/workout/${workoutId}/working-sets`);
-  return response.json() as Promise<WorkingSet[]>;
+  return response.json();
 }
 
 export async function createWorkingSet(payload: CreateWorkingSet) {

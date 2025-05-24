@@ -15,13 +15,10 @@ export const ExerciseManager = () => {
   const [muscleGroup, setMuscleGroup] = useState<MuscleGroup[]>([]);
 
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [editDraft, setEditDraft] = useState<Partial<Omit<Exercise, "id">>>({
-    name: "",
-  });
+  const [editDraft, setEditDraft] = useState<Partial<Omit<Exercise, "id">>>({name: ""});
 
     const [isCreating, setIsCreating] = useState(false);
-  const [createDraft, setCreateDraft] = useState<{    name: string;    muscleGroupId: number | null;  }>({    name: "",    muscleGroupId: muscleGroup.length > 0 ? muscleGroup[0].id : null,
-  });
+  const [createDraft, setCreateDraft] = useState<{name: string; muscleGroupId: number | null;}>({ name: "", muscleGroupId: muscleGroup.length > 0 ? muscleGroup[0].id : null});
 
   const [createDropDownLabel, setCreateDropDownLabel] = useState<{    name: string;    muscleGroupId: number | null;  }>({ name: "Muscle Group", muscleGroupId: null });
 
@@ -38,11 +35,8 @@ export const ExerciseManager = () => {
   const getExercise = useCallback(async () => {
     try {
       const data = await fetchExercises();
-      const normalized = data.map((ex) => ({
-        ...ex,
-        muscleGroupId: ex.muscleGroupId ?? 0,
-      }));
-      setExercise(normalized);
+      const normalized = data.map((ex) => ({...ex,muscleGroupId: ex.muscleGroupId ?? 0}));
+      setExercise([...normalized].sort((a, b) => b.muscleGroupId - a.muscleGroupId));
     } catch (err) {
       console.error("Failed to load working sets", err);
     }
@@ -78,7 +72,7 @@ export const ExerciseManager = () => {
     await getExercise();
 
     setIsCreating(false);
-    setCreateDraft({ name: "", muscleGroupId: null });
+     setCreateDraft({ name: "", muscleGroupId: createDraft.muscleGroupId });
   };
 
   const confirmEdit = async () => {
@@ -148,10 +142,12 @@ export const ExerciseManager = () => {
   return (
     <div>
       <div className="page-header">
-        <h1>Exercise</h1>
+        <h1>Exercises</h1>
+        <div className="action-buttons">
         <SlButton variant="primary" onClick={() => setIsCreating(true)}>
-          Add Exercise
+          Add
         </SlButton>
+        </div>
       </div>
 
       {/* <br />
@@ -164,6 +160,7 @@ export const ExerciseManager = () => {
             <SlInput
               value={createDraft.name ?? ""}
               maxlength={20}
+              className="text-input"
               placeholder="Exercise"
               onKeyDown={(e) => e.stopPropagation()}
               onKeyUp={(e) => e.stopPropagation()}
@@ -236,6 +233,7 @@ export const ExerciseManager = () => {
                         <SlInput
                           value={editDraft.name ?? ""}
                           placeholder="Exercise"
+                          className="text-input"
                           maxlength={20}
                           onPointerDown={(e) => e.stopPropagation()}
                           onKeyDown={(e) => e.stopPropagation()}

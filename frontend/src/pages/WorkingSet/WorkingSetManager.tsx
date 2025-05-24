@@ -10,7 +10,7 @@ import {  fetchWorkingSets,  createWorkingSet,  updateWorkingSet,  deleteWorking
 import { fetchExercises } from "../../services/exerciseService.ts";
 import { fetchMuscleGroups } from "../../services/muscleGroupService.ts";
 
-import styles from "./WorkingSetManager.module.scss";
+import "./WorkingSetManager.module.scss";
 
 export const WorkingSetManager = () => {
   const { id: workoutId } = useParams();
@@ -30,7 +30,7 @@ export const WorkingSetManager = () => {
   const [editLabelMuscleGroup, setEditLabelMuscleGroup] = useState<{    name: string;    muscleGroupId: number;  }>({ name: "Muscle Group", muscleGroupId: 0 });
 
   const [isCreating, setIsCreating] = useState(false);
-  const [createDraft, setCreateDraft] = useState<    Partial<Omit<WorkingSet, "id">>  >({});
+  const [createDraft, setCreateDraft] = useState<Partial<Omit<WorkingSet, "id">>  >({});
   const [createLabelExercise, setCreateLabelExercise] = useState<{    name: string;    exerciseId: number;  }>({ name: "Exercise", exerciseId: 0 });
   const [createExercise, setCreateExercise] = useState<Exercise[]>([]);
   const [createLabelMuscleGroup, setCreateLabelMuscleGroup] = useState<{    name: string;    muscleGroupId: number;  }>({ name: "Muscle Group", muscleGroupId: 0 });
@@ -45,7 +45,7 @@ export const WorkingSetManager = () => {
   const loadSets = useCallback(async () => {
     try {
       const data = await fetchWorkingSets(Number(workoutId));
-      setWorkingSets(data);
+      setWorkingSets(data.sort((a, b) => b.id - a.id));
     } catch (err) {
       console.error("Failed to load working sets", err);
     }
@@ -86,7 +86,7 @@ export const WorkingSetManager = () => {
       await loadSets();
 
       setIsCreating(false);
-      setCreateDraft({});
+       setCreateDraft({repetitions: createDraft.repetitions, weight: createDraft.weight, exerciseId: createDraft.exerciseId});
     } catch (error) {
       console.error("Failed to create working set:", error);
     }
@@ -176,14 +176,16 @@ export const WorkingSetManager = () => {
 
   return (
     <div>
-      <div className="page-header">
-        <h1>Working Sets </h1>
+      <div className="page-header" style={{ minWidth: "37.5rem" }}>
+        <h1>Sets </h1>
+        <div className="action-buttons">
         <SlButton variant="primary" onClick={() => setIsCreating(true)}>
-          Add Set
+          Add
         </SlButton>
         <SlButton variant="primary" onClick={() => navigate("/workout")}>
           Back
         </SlButton>
+        </div>
       </div>
 
       {isCreating && (
@@ -196,7 +198,8 @@ export const WorkingSetManager = () => {
                   className="number-input"
                   value={createDraft.weight?.toString() ?? "0"}
                   placeholder="kg"
-                  min="0"
+                  min={0}
+                  max={1000}
                   type="number"
                   onPointerDown={(e) => e.stopPropagation()}
                   onKeyDown={(e) => e.stopPropagation()}
@@ -211,7 +214,8 @@ export const WorkingSetManager = () => {
                   className="number-input"
                   value={createDraft.repetitions?.toString() ?? "0"}
                   placeholder="reps"
-                  min="0"
+                  min={0}
+                  max={150}
                   type="number"
                   onPointerDown={(e) => e.stopPropagation()}
                   onKeyDown={(e) => e.stopPropagation()}
@@ -274,6 +278,7 @@ export const WorkingSetManager = () => {
                 <SlInput
                   value={createDraft.comment?.toString() ?? ""}
                   placeholder="Comment"
+                  maxlength={20}
                   onPointerDown={(e) => e.stopPropagation()}
                   onKeyDown={(e) => e.stopPropagation()}
                   onKeyUp={(e) => e.stopPropagation()}
@@ -324,7 +329,8 @@ export const WorkingSetManager = () => {
                           className="number-input"
                           value={editDraft.weight?.toString() ?? "0"}
                           placeholder="kg"
-                          min="0"
+                          min={0}
+                          max={1000}
                           type="number"
                           onPointerDown={(e) => e.stopPropagation()}
                           onKeyDown={(e) => e.stopPropagation()}
@@ -341,7 +347,8 @@ export const WorkingSetManager = () => {
                           value={editDraft.repetitions?.toString() ?? "0"}
                           placeholder="reps"
                           type="number"
-                          min="0"
+                          min={0}
+                          max={150}
                           onPointerDown={(e) => e.stopPropagation()}
                           onKeyDown={(e) => e.stopPropagation()}
                           onKeyUp={(e) => e.stopPropagation()}
@@ -410,6 +417,7 @@ export const WorkingSetManager = () => {
                         <SlInput
                           value={editDraft.comment?.toString() ?? ""}
                           placeholder="Comment"
+                          maxlength={20}
                           onPointerDown={(e) => e.stopPropagation()}
                           onKeyDown={(e) => e.stopPropagation()}
                           onKeyUp={(e) => e.stopPropagation()}
@@ -422,10 +430,10 @@ export const WorkingSetManager = () => {
                       </>
                     ) : (
                       <>
-                        {item.exerciseId != 0 && <p>{exercises.find((x) => x.id === item.exerciseId)?.name}</p> }
-                        {item.weight != null && <p>Weight: {item.weight} kg</p>}
-                        {item.repetitions != null && <p>Reps: {item.repetitions} </p>}
-                        {item.comment != null && <p>Comment: {item.comment} </p>}
+                        {item.exerciseId != 0 && item.exerciseId != null  && <p> {exercises.find((x) => x.id === item.exerciseId)?.name}  | </p> }
+                        {item.weight != null && item.weight != 0  && <p>Weight: {item.weight} kg</p>}
+                        {item.repetitions != null && item.repetitions != 0 && <p>Reps: {item.repetitions} </p>}
+                        {item.comment !== null && <p>Comment: {item.comment} </p>}
                       </>
                     )}
                   </div>

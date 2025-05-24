@@ -15,8 +15,12 @@ export const MuscleGroupManager = () => {
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editDraft, setEditDraft] = useState<Partial<Omit<MuscleGroup, "id">>>({    name: "",  });
+
   const [isCreating, setIsCreating] = useState(false);
-  const [createDraft, setCreateDraft] = useState<{ name: string }>({    name: "",  });
+  const [createDraft, setCreateDraft] = useState<{ name: string }>({
+    name: "",
+  });
+
   const handleDragEnd = createDragEndHandler<MuscleGroup>(setMuscleGroup);
   const sensors = useSensors(useSensor(PointerSensor));
 
@@ -28,7 +32,7 @@ export const MuscleGroupManager = () => {
       try {
         const data = await fetchMuscleGroups();
 
-        setMuscleGroup(data);
+        setMuscleGroup([...data].sort((a, b) => a.name.localeCompare(b.name)));
       } catch (err) {
         console.error("Failed to load Muscle Groups", err);
       }
@@ -87,9 +91,11 @@ export const MuscleGroupManager = () => {
     <div>
       <div className="page-header">
         <h1>Muscle Groups</h1>
+        <div className="action-buttons">
         <SlButton variant="primary" onClick={() => setIsCreating(true)}>
-          Add Muscle Group
+          Add
         </SlButton>
+        </div>
       </div>
 
       {isCreating && (
