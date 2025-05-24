@@ -47,8 +47,9 @@ Welcome to the **Web Gym Tracker**, a full-stack application built with Express.
    cd ../client && npm install
    ```
 
-3. **Configure environment variables**
-   * Add your MySQL connection string in the file **Database** in the **backend**
+3. **DB Set up**
+   * Use the sql file in **_db** in order to create the database
+   * Add your connection string in the file **..backend/models/Database.ts**
 ---
 
 4. **Run the application**
