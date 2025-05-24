@@ -7,7 +7,7 @@ export class Database {
     this.conn = mysql.createPool({
       host: "127.0.0.1",
       port: 3307,
-      database: "db_gym_tracker",
+      database: "db_gym_tracker2",
       user: "root",
       password: "",
     });
