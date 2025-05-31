@@ -41,10 +41,10 @@ Welcome to the **Web Gym Tracker**, a full-stack application built with Express.
 
    ```bash
    # Server
-   cd server && npm install
+   cd backend && npm install
 
    # Client
-   cd ../client && npm install
+   cd ../frontend && npm install
    ```
 
 3. **DB Set up**
