@@ -17,9 +17,7 @@ export const MuscleGroupManager = () => {
   const [editDraft, setEditDraft] = useState<Partial<Omit<MuscleGroup, "id">>>({    name: "",  });
 
   const [isCreating, setIsCreating] = useState(false);
-  const [createDraft, setCreateDraft] = useState<{ name: string }>({
-    name: "",
-  });
+  const [createDraft, setCreateDraft] = useState<{ name: string }>({ name: "" });
 
   const handleDragEnd = createDragEndHandler<MuscleGroup>(setMuscleGroup);
   const sensors = useSensors(useSensor(PointerSensor));
@@ -28,7 +26,7 @@ export const MuscleGroupManager = () => {
     getMuscleGroup();
   }, []);
 
-    const getMuscleGroup = useCallback(async () => {
+  const getMuscleGroup = useCallback(async () => {
       try {
         const data = await fetchMuscleGroups();
 

@@ -17,7 +17,7 @@ export const ExerciseManager = () => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editDraft, setEditDraft] = useState<Partial<Omit<Exercise, "id">>>({name: ""});
 
-    const [isCreating, setIsCreating] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   const [createDraft, setCreateDraft] = useState<{name: string; muscleGroupId: number | null;}>({ name: "", muscleGroupId: muscleGroup.length > 0 ? muscleGroup[0].id : null});
 
   const [createDropDownLabel, setCreateDropDownLabel] = useState<{    name: string;    muscleGroupId: number | null;  }>({ name: "Muscle Group", muscleGroupId: null });
