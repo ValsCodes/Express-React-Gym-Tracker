@@ -1,25 +1,32 @@
-# Typescript Express + React Web Gym Tracker 💪
+# TypeScript Express + React Gym Tracker 💪
 
-Welcome to the **Web Gym Tracker**, a full-stack application built with Express.js and React to help fitness enthusiasts log workouts and track progress over time.
+A full-stack gym tracking app where you can manage muscle groups, exercises, workouts, and per-workout working sets.
 
----
-
-## 🚀 Features
-
-* **Workout Logging**: Create, read, update, and delete workouts, muscle groups, exercises and workout sets with ease.
-* **RESTful API**: Well-structured endpoints for seamless front-end/back-end communication.
-* **TypeScript**: Entire project written in TypeScript with strict mode for enhanced type safety and maintainability.
+This repository contains:
+- **Express + TypeScript API** (`/backend`)
+- **React + Vite + TypeScript client** (`/frontend`)
+- **MySQL schema + seed data** (`/_db/db_gym_tracker2.sql`)
 
 ---
 
-## 🛠️ Tech Stack
+## ✨ What this app does
 
-| Layer        | Technology              |
-| ------------ | ----------------------- |
-| **Backend**  | Node.js, Express.js     |
-| **Database** | MySQL                   |
-| **Frontend** | React                   |
-| **Styling**  | Shoelace, SCSS          |
+- Create, edit, and delete **muscle groups**
+- Create, edit, and delete **exercises** linked to muscle groups
+- Create, edit, and delete **workouts**
+- Add **working sets** (reps, weight, comments) to a workout
+- Reorder list-style items in the UI with drag-and-drop
+
+---
+
+## 🧱 Tech stack
+
+| Layer | Stack |
+|---|---|
+| Frontend | React 19, TypeScript, Vite, Sass, Shoelace |
+| Backend | Node.js, Express 5, TypeScript |
+| Database | MySQL (via `mysql2/promise`) |
+| Tooling | ESLint, TypeScript compiler, Nodemon |
 
 ---
 
@@ -29,82 +36,187 @@ Welcome to the **Web Gym Tracker**, a full-stack application built with Express.
 
 ---
 
-## 💾 Installation
+## 📁 Project structure
 
-1. **Clone the repo**
-
-   ```bash
-   gh repo clone ValsCodes/Express-React-Gym-Tracker
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   # Server
-   cd backend && npm install
-
-   # Client
-   cd ../frontend && npm install
-   ```
-
-3. **DB Set up**
-   * Use the sql file in **_db** in order to create the database
-   * Add your connection string in the file **..backend/models/Database.ts**
----
-
-4. **Run the application**
-# From project root
-  * Run Frontend 
-   ```bash
-   cd .\frontend\
-   npm run start
-   ```
-  * Run Backend
-
-  ```bash
-   cd .\backend\
-   npm run dev
-   ```
----
-
-## 📦 Usage
-
-* Navigate to the **Muscle Groups** page and add your own muscle groups.
-* Navigate to the **Exercise** page and add your own exercises.
-* Navigate to the **Workouts** page to create a workouts.
-* Double click any of your workouts to view and add your workout sets.
-
-* Edit or delete entries as needed.
+```text
+.
+├── backend/                # Express API
+│   ├── controllers/        # Route handlers (business orchestration)
+│   ├── models/             # DB access layer
+│   ├── routes/             # API endpoints
+│   ├── common/             # validators, mappers, middleware, types
+│   └── index.ts            # Server entrypoint (port 3001)
+├── frontend/               # React app (Vite)
+│   ├── src/pages/          # Feature screens (Workout, Exercise, etc.)
+│   ├── src/components/     # Reusable UI/form components
+│   ├── src/services/       # API request helpers
+│   └── vite.config.ts      # Dev proxy to backend
+└── _db/
+    └── db_gym_tracker2.sql # SQL schema + seed data
+```
 
 ---
 
-## 🔌 API Endpoints
+## ✅ Prerequisites
 
-* `GET /workout` - Retrieve all workouts
-* `GET /workout/:id` - Retrieve workout by Id
-* `GET /workout/:id/working-sets` - Retrieve all working sets for workout
-* `POST /workout` - Create a new workout entry
-* `PUT /workout/:id` - Update an existing workout
-* `DELETE /workout/:id` - Remove a workout entry
-  
-* `GET /muscle-group` - Retrieve all muscle groups
-* `GET /muscle-group/:id` - Retrieve muscle group by Id
-* `POST /muscle-group` - Create a new muscle group entry
-* `PUT /muscle-group/:id` - Update an existing muscle group
-* `DELETE /muscle-group/:id` - Remove a muscle group entry
-  
-* `GET /exercise` - Retrieve all exercises
-* `GET /exercise/:id` - Retrieve exercise by Id
-* `POST /exercise` - Create a new exercise entry
-* `PUT /exercise/:id` - Update an existing exercise
-* `DELETE /exercise/:id` - Remove a exercise entry
-  
-* `GET /working-set` - Retrieve all working sets
-* `GET /working-set/:id` - Retrieve working set by Id
-* `POST /working-set` - Create a new working set entry
-* `PUT /working-set/:id` - Update an working set exercise
-* `DELETE /working-set/:id` - Remove a working set entry
+- **Node.js** 18+
+- **npm** 9+
+- **MySQL** (or MariaDB) running locally
 
 ---
 
-Happy lifting! 💪
+## ⚙️ Setup and installation
+
+### 1) Clone repository
+
+```bash
+git clone https://github.com/ValsCodes/Express-React-Gym-Tracker.git
+cd Express-React-Gym-Tracker
+```
+
+### 2) Install dependencies
+
+```bash
+cd backend && npm install
+cd ../frontend && npm install
+```
+
+### 3) Create and seed the database
+
+Import `/_db/db_gym_tracker2.sql` into your MySQL instance.
+
+Examples:
+
+```bash
+# Option A: from CLI
+mysql -u root -p < _db/db_gym_tracker2.sql
+
+# Option B: use a GUI client (MySQL Workbench / DBeaver / phpMyAdmin)
+# and run the SQL file manually.
+```
+
+### 4) Configure DB connection
+
+Update the connection config in `backend/models/Database.ts`:
+
+```ts
+this.conn = mysql.createPool({
+  host: "127.0.0.1",
+  port: 3306,
+  database: "db_gym_tracker2",
+  user: "root",
+  password: "",
+});
+```
+
+> Tip: move these values to environment variables for production use.
+
+---
+
+## ▶️ Running the app
+
+Open two terminals from the repository root.
+
+### Terminal 1: backend
+
+```bash
+cd backend
+npm start
+```
+
+Backend starts on `http://localhost:3001`.
+
+### Terminal 2: frontend
+
+```bash
+cd frontend
+npm run dev
+```
+
+Frontend starts on Vite's default dev URL (usually `http://localhost:5173`).
+
+### How frontend talks to backend in development
+
+The frontend uses relative API calls (e.g. `/workout`) and Vite proxies these to `http://localhost:3001`.
+
+---
+
+## 🧭 Frontend routes
+
+- `/` → Workout manager
+- `/workout` → Workout manager
+- `/muscle-group` → Muscle group manager
+- `/exercise` → Exercise manager
+- `/workout/:id/working-set` → Working set manager for selected workout
+
+---
+
+## 🔌 API endpoints
+
+### Workout
+- `GET /workout` — list workouts
+- `GET /workout/:id` — get one workout
+- `POST /workout` — create workout
+- `PUT /workout/:id` — update workout
+- `DELETE /workout/:id` — delete workout
+- `GET /workout/:id/working-sets` — list working sets for a workout
+
+### Muscle Group
+- `GET /muscle-group`
+- `GET /muscle-group/:id`
+- `POST /muscle-group`
+- `PUT /muscle-group/:id`
+- `DELETE /muscle-group/:id`
+
+### Exercise
+- `GET /exercise`
+- `GET /exercise/:id`
+- `POST /exercise`
+- `PUT /exercise/:id`
+- `DELETE /exercise/:id`
+
+### Working Set
+- `GET /working-set`
+- `GET /working-set/:id`
+- `POST /working-set`
+- `PUT /working-set/:id`
+- `DELETE /working-set/:id`
+
+---
+
+## 🗃️ Database overview
+
+Tables included in the SQL script:
+- `muscle_group`
+- `exercise` (FK → `muscle_group.id`, `ON DELETE SET NULL`)
+- `workout`
+- `working_set` (FK → `workout.id` with `ON DELETE CASCADE`, FK → `exercise.id` with `ON DELETE SET NULL`)
+
+This means deleting a workout removes its working sets automatically.
+
+---
+
+## 📜 Available scripts
+
+### Backend (`/backend/package.json`)
+- `npm start` — run API with nodemon
+
+### Frontend (`/frontend/package.json`)
+- `npm run dev` — start Vite dev server
+- `npm run build` — type-check and build production assets
+- `npm run lint` — run ESLint
+- `npm run preview` — preview built app locally
+
+---
+
+## 🚀 Suggested next improvements
+
+- Move DB credentials to `.env`
+- Add centralized error-handling middleware for API responses
+- Add authentication (session/JWT)
+- Add tests for controllers/services (unit + integration)
+- Add CI workflow for lint/build/test
+
+---
+
+Happy lifting and happy coding! 💪
